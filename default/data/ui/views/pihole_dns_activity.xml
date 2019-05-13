@@ -105,7 +105,7 @@
   </row>
   <row>
     <panel>
-      <title>Queries</title>
+      <title>Top Queries</title>
       <table>
         <search>
           <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="Query Refused" by DNS.query, DNS.reply_code
@@ -126,6 +126,24 @@
         <option name="wrap">true</option>
         <drilldown>
           <link target="_blank">/app/pihole_app/pihole_dns_search?form.query=$row.Query$</link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>Top Blocked Queries</title>
+      <table>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count as Count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.query
+| rename DNS.* as *
+| rename query as Query
+| sort - Count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <drilldown>
+          <link target="_blank">/app/pihole_dns_app/pihole_dns_search?form.query=$click.value$</link>
         </drilldown>
       </table>
     </panel>

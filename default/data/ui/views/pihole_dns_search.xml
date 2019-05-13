@@ -176,6 +176,21 @@
         <option name="trellis.size">medium</option>
       </chart>
     </panel>
+    <panel>
+      <map>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
+| rename DNS.* as *
+| iplocation answer
+| geostats globallimit=0 sum(count) by query</query>
+          <earliest>$gloabl_time_tok.earliest$</earliest>
+          <latest>$gloabl_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="mapping.type">marker</option>
+        <option name="refresh.display">progressbar</option>
+      </map>
+    </panel>
   </row>
   <row>
     <panel>
