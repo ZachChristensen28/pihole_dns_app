@@ -119,7 +119,7 @@
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
         <drilldown>
-          <link target="_blank">/app/pihole_app/pihole_transaction_search?form.txn=$row.Transaction%20ID$</link>
+          <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.Transaction%20ID$</link>
         </drilldown>
       </table>
     </panel>
@@ -204,7 +204,7 @@
         </search>
         <option name="list.drilldown">full</option>
         <drilldown>
-          <link target="_blank">/app/pihole_app/pihole_transaction_search?form.txn=$row.transaction_id$</link>
+          <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.transaction_id$</link>
         </drilldown>
       </event>
     </panel>

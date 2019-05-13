@@ -7,3 +7,7 @@ This app was designed with efficiency in mind. It leverages the CIM accelerated 
 - Install [Splunk Common Information Model](https://splunkbase.splunk.com/app/1621/)
   - Network Resolution Datamodel must be Accelerated for the dashboards to function.
 - Install [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns)
+- Install [Force Directed App for Splunk](https://splunkbase.splunk.com/app/3767/)
+
+## Configurations
+There is one search macro that needs to be modified to improve performance. Update the \`pihole_index\` macro to the appropriate index. This can be done from the web interface by first navigating to the Pihole DNS App. Then Select at the top Settings > Advanced Search > Search macros. (Make sure the Pihole app is selected).
