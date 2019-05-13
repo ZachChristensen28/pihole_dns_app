@@ -1,0 +1,197 @@
+<form theme="dark">
+  <label>Pihole DNS Search</label>
+  <fieldset submitButton="true">
+    <input type="time" token="gloabl_time_tok">
+      <label></label>
+      <default>
+        <earliest>@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="src">
+      <label>Source</label>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="src_disply_tok" submit="false">Source = $value$</set>
+          <set token="src_tok" submit="false">(DNS.src=$value|s$)</set>
+          <set token="src_raw_tok" submit="false">(src=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="src_disply_tok" submit="false">All Source IPs</set>
+          <set token="src_tok" submit="false"></set>
+          <set token="src_raw_tok" submit="false"></set>
+        </condition>
+      </change>
+    </input>
+    <input type="text" token="dest">
+      <label>Forwarded Destination</label>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="dest_tok" submit="false">(DNS.dest=$value|s$)</set>
+          <set token="dest_raw_tok" submit="false">(dest=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="dest_tok" submit="false"></set>
+          <set token="dest_raw_tok" submit="false"></set>
+        </condition>
+      </change>
+    </input>
+    <input type="text" token="query">
+      <label>Query</label>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="query_tok" submit="false">(DNS.query=$value|s$)</set>
+          <set token="query_raw_tok" submit="false">(query=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="query_tok" submit="false"></set>
+          <set token="query_raw_tok" submit="false"></set>
+        </condition>
+      </change>
+    </input>
+    <input type="dropdown" token="message_type">
+      <label>Message Type</label>
+      <choice value="">All</choice>
+      <choice value="response">Response</choice>
+      <choice value="query">Query</choice>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="message_type_tok" submit="false">(DNS.message_type=$value|s$)</set>
+          <set token="message_type_raw_tok" submit="false">(message_type=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="message_type_tok" submit="false"></set>
+          <set token="message_type_raw_tok" submit="false"></set>
+        </condition>
+      </change>
+    </input>
+    <input type="dropdown" token="reply_code">
+      <label>Reply Code</label>
+      <choice value="">All</choice>
+      <choice value="all_errors">All Errors</choice>
+      <fieldForLabel>reply_code</fieldForLabel>
+      <fieldForValue>reply_code</fieldForValue>
+      <search>
+        <query>| `cim_dns_reply_codes`</query>
+        <earliest>-1s@s</earliest>
+        <latest>now</latest>
+      </search>
+      <default></default>
+      <change>
+        <condition value="all_errors">
+          <set token="reply_code_tok" submit="false">(DNS.reply_code!="No Errors" OR DNS.reply_code!="Query Refused")</set>
+          <set token="reply_code_raw_tok" submit="false">(reply_code!="No Errors" OR reply_code!="Query Refused")</set>
+        </condition>
+        <condition match="len($value$) &gt; 0">
+          <set token="reply_code_tok" submit="false">(DNS.reply_code=$value|s$)</set>
+          <set token="reply_code_raw_tok" submit="false">(reply_code=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="reply_code_tok" submit="false"></set>
+          <set token="reply_code_raw_tok" submit="false"></set>
+        </condition>
+      </change>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t max(_time) as Time, values(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", values(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.src, DNS.query, DNS.answer, DNS.transaction_id
+| rename DNS.* as *
+| rename src as "Source IP", answer as Answer, query as Query, transaction_id as "Transaction ID"
+| sort - Count
+| eval Forwarded=if(Forwarded=="unknown","Not Forwarded",Forwarded), Time=strftime(Time, "%c")
+| fields Time, "Source IP", Forwarded, "Message Type", "Record Type", Query, Answer, "Reply Code", "Transaction ID", Count</query>
+          <earliest>$gloabl_time_tok.earliest$</earliest>
+          <latest>$gloabl_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <drilldown>
+          <link target="_blank">/app/pihole_app/pihole_transaction_search?form.txn=$row.Transaction%20ID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Source vs Monthly Query Avg for all Clients</title>
+      <chart>
+        <title>$src_disply_tok$</title>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+| rename DNS.* as *
+| eval startTime=relative_time(now(), "@d")
+| eval series=if(_time&gt;=startTime, "today","prior")
+| timechart span=1h sum(eval(if(message_type=="Query",'count',0))) as totalQueries, sum(eval(if(reply_code=="Query Refused", 'count',0))) as totalBlocked by series
+| eval Hour=strftime(_time, "%H")
+| stats median("totalBlocked: prior") as "Blocked Avg", median("totalQueries: prior") as "Queries Avg", sum("totalBlocked: today") as "Blocked Today", sum("totalQueries: today") as "Queries Today" by Hour</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.overlayFields">"Queries Avg","Blocked Avg"</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <event>
+        <search>
+          <query>| from datamodel:"Network_Resolution"."DNS"
+| search sourcetype=pihole $src_raw_tok$ $dest_raw_tok$ $query_raw_tok$ $message_type_raw_tok$ $reply_code_raw_tok$
+| head 100</query>
+          <earliest>$gloabl_time_tok.earliest$</earliest>
+          <latest>$gloabl_time_tok.latest$</latest>
+        </search>
+        <option name="list.drilldown">full</option>
+        <drilldown>
+          <link target="_blank">/app/pihole_app/pihole_transaction_search?form.txn=$row.transaction_id$</link>
+        </drilldown>
+      </event>
+    </panel>
+  </row>
+</form>

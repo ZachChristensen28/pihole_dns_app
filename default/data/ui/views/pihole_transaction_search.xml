@@ -1,0 +1,179 @@
+<form theme="dark">
+  <label>Pihole Transaction Search</label>
+  <fieldset submitButton="true">
+    <input type="time" token="global_time_tok">
+      <label></label>
+      <default>
+        <earliest>@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="txn">
+      <label>Transaction ID</label>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="txn_raw_tok" submit="false">(transaction_id=$value|s$)</set>
+          <set token="txn_tok" submit="false">(DNS.transaction_id=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="txn_raw_tok" submit="false">(transaction_id=INVALID)</set>
+          <set token="txn_tok" submit="false">(DNS.transaction_id=INVALID)</set>
+        </condition>
+      </change>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Source IP</title>
+      <single>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ by DNS.src
+| rename DNS.* as *
+| fields src</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Query</title>
+      <single>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.query
+| rename DNS.* as *
+| fields query</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Query Type</title>
+      <single>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.record_type
+| rename DNS.* as *
+| fields record_type</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Query Action</title>
+      <single>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count values(DNS.dest) as dest from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ NOT DNS.dest=unknown
+| eval dest=mvjoin(dest, " &amp; ")
+| eval queryAction=if(isnotnull(dest),"Forwarded to -&gt; ".dest,"Responded from Cache")
+| fields queryAction</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Reply Description</title>
+      <single>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response $txn_tok$ by DNS.reply_code
+| rename DNS.* as *
+| fields reply_code</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Validation Result</title>
+      <single>
+        <search>
+          <query>`pihole_index` sourcetype=pihole $txn_raw_tok$
+| eval validation_result=if(isnotnull(validation_result), validation_result, "N/a")
+| stats count by validation_result
+| sort limit=1 count
+| fields validation_result</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="force_directed_viz.force_directed">
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ DNS.answer!=unknown by DNS.src, DNS.query, DNS.answer
+| rename DNS.* as *
+| eval answer=if(answer=="0.0.0.0", "Pi-holed!", answer)
+| rename src as node00, answer as node01, query as node02
+| eval node00="Source IP: ".node00, node01="Reply: ".node01, node02="Query: ".node02</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="force_directed_viz.force_directed.AttractDistanceMax">200</option>
+        <option name="force_directed_viz.force_directed.AttractDistanceMin">60</option>
+        <option name="force_directed_viz.force_directed.AttractForceStrength">-300</option>
+        <option name="force_directed_viz.force_directed.CollisionIterations">1</option>
+        <option name="force_directed_viz.force_directed.CollisionRadius">20</option>
+        <option name="force_directed_viz.force_directed.CollisionStrength">0.7</option>
+        <option name="force_directed_viz.force_directed.ColorRange1">100</option>
+        <option name="force_directed_viz.force_directed.ColorRange1Code">#65a637</option>
+        <option name="force_directed_viz.force_directed.ColorRange2">500</option>
+        <option name="force_directed_viz.force_directed.ColorRange2Code">#6db7c6</option>
+        <option name="force_directed_viz.force_directed.ColorRange3">1000</option>
+        <option name="force_directed_viz.force_directed.ColorRange3Code">#f7bc38</option>
+        <option name="force_directed_viz.force_directed.ColorRange4">10000</option>
+        <option name="force_directed_viz.force_directed.ColorRange4Code">#f58f39</option>
+        <option name="force_directed_viz.force_directed.ColorRange5">1000000</option>
+        <option name="force_directed_viz.force_directed.ColorRange5Code">#d93f3c</option>
+        <option name="force_directed_viz.force_directed.ForceCollision">20</option>
+        <option name="force_directed_viz.force_directed.LineColor">disabled</option>
+        <option name="force_directed_viz.force_directed.LinkDistance">100</option>
+        <option name="force_directed_viz.force_directed.LinkLength">1</option>
+        <option name="force_directed_viz.force_directed.RepelDistanceMax">50</option>
+        <option name="force_directed_viz.force_directed.RepelDistanceMin">10</option>
+        <option name="force_directed_viz.force_directed.RepelForceStrength">-140</option>
+        <option name="force_directed_viz.force_directed.StrokeWidth">1</option>
+        <option name="force_directed_viz.force_directed.arrows">enabled</option>
+        <option name="force_directed_viz.force_directed.circleSize">5</option>
+        <option name="force_directed_viz.force_directed.panzoom">disabled</option>
+        <option name="force_directed_viz.force_directed.theme">dark</option>
+        <option name="height">457</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>DNS Transaction</title>
+      <event>
+        <search>
+          <query>`pihole_index` sourcetype=pihole $txn_raw_tok$
+| transaction transaction_id</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+      </event>
+    </panel>
+  </row>
+</form>
