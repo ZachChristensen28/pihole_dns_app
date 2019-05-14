@@ -60,7 +60,6 @@
           <earliest>@d</earliest>
           <latest>now</latest>
         </search>
-        <option name="drilldown">none</option>
         <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">0</option>
@@ -68,6 +67,10 @@
         <option name="underLabel">% Queries Blocked vs Yesterday</option>
         <option name="unit">%</option>
         <option name="useThousandSeparators">0</option>
+        <option name="drilldown">all</option>
+        <drilldown>
+          <link target="_blank">search?q=%7C%20from%20datamodel:Network_Resolution.DNS%20%20%0A%7C%20search%20sourcetype=pihole%0A%7C%20top%20src&amp;earliest=$global_time_tok.earliest$&amp;latest=$global_time_tok.latest$</link>
+        </drilldown>
       </single>
     </panel>
     <panel>
