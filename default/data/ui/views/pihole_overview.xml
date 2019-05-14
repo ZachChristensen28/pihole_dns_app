@@ -150,7 +150,7 @@
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
         </search>
-        <option name="drilldown">none</option>
+        <option name="drilldown">cell</option>
         <drilldown>
           <link target="_blank">/app/pihole_dns_app/pihole_dns_search?form.src=$click.value$</link>
         </drilldown>
