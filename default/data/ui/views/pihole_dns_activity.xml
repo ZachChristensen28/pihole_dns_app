@@ -125,7 +125,7 @@
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
         <drilldown>
-          <link target="_blank">/app/pihole_app/pihole_dns_search?form.query=$row.Query$</link>
+          <link target="_blank">/app/pihole_dns_app/pihole_dns_search?form.query=$row.Query$</link>
         </drilldown>
       </table>
     </panel>
