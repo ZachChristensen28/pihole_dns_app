@@ -83,8 +83,8 @@
       <default></default>
       <change>
         <condition value="all_errors">
-          <set token="reply_code_tok" submit="false">(DNS.reply_code!="No Errors" OR DNS.reply_code!="Query Refused")</set>
-          <set token="reply_code_raw_tok" submit="false">(reply_code!="No Errors" OR reply_code!="Query Refused")</set>
+          <set token="reply_code_tok" submit="false">(DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" DNS.reply_code!="unknown")</set>
+          <set token="reply_code_raw_tok" submit="false">(reply_code!="No Error" reply_code!="Query Refused" reply_code!="unknown")</set>
         </condition>
         <condition match="len($value$) &gt; 0">
           <set token="reply_code_tok" submit="false">(DNS.reply_code=$value|s$)</set>
