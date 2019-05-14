@@ -1,0 +1,108 @@
+<form theme="dark">
+  <label>Pihole Query Log</label>
+  <fieldset submitButton="false">
+    <input type="time" token="global_time_tok" searchWhenChanged="true">
+      <label></label>
+      <default>
+        <earliest>-60m@m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Top Queries</title>
+      <chart>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by DNS.query
+| rename DNS.* as *
+| sort 10 -count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Top Queries Blocked</title>
+      <chart>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.query
+| rename DNS.* as *
+| sort 10 -count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Queries by Source over Time</title>
+      <chart>
+        <search>
+          <query>| tstats local=f prestats=t summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by _time, DNS.src
+| rename DNS.* as *
+| timechart useother=f count by src</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.seriesColors">[0xD93240,0x03588C,0xD9B607,0xA66D05,0xBF0404,0xF20544,0xCEB3F2,0x044BD9,0xB0BF39,0xF28705]</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Blocked Queryies by Source over Time</title>
+      <chart>
+        <search>
+          <query>| tstats local=f prestats=t summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by _time, DNS.src
+| rename DNS.* as *
+| timechart useother=f count by src</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.seriesColors">[0xD93240,0x03588C,0xD9B607,0xA66D05,0xBF0404,0xF20544,0xCEB3F2,0x044BD9,0xB0BF39,0xF28705]</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>| tstats summariesonly=t allow_old_summaries=t max(_time) as _time, values(DNS.dest) as "Forwarded Destination" values(DNS.message_type) as "Message Type", values(DNS.record_type) as "Query Type", values(DNS.answer) as Answer, values(DNS.reply_code) as "Reply Code" from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.query!="unknown" by DNS.transaction_id, DNS.query, DNS.src
+| rename DNS.* as *
+| rename query as Query, src as Source, transaction_id as "Transaction ID"
+| eval answer=if(answer=="0.0.0.0","Pi-Holed!",answer)
+| sort -_time
+| fields _time, Query, Source, "Forwarded Destination", "Message Type", "Query Type", Answer, "Reply Code", "Transaction ID"</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
