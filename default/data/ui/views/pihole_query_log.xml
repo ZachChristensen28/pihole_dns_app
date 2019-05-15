@@ -11,17 +11,20 @@
   </fieldset>
   <row>
     <panel>
-      <title>Top Queries</title>
+      <title>Top Queries Allowed</title>
       <chart>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by DNS.query
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" by DNS.query
 | rename DNS.* as *
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="charting.chart">pie</option>
-        <option name="charting.drilldown">none</option>
+        <option name="charting.drilldown">all</option>
+        <drilldown>
+          <link target="_blank">/app/pihole_dns_app/pihole_dns_search?form.query=$click.value$&amp;form.reply_code=No%20Error&amp;form.message_type=Response</link>
+        </drilldown>
       </chart>
     </panel>
     <panel>
@@ -35,7 +38,10 @@
           <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="charting.chart">pie</option>
-        <option name="charting.drilldown">none</option>
+        <option name="charting.drilldown">all</option>
+        <drilldown>
+          <link target="_blank">/app/pihole_dns_app/pihole_dns_search?form.query=$click.value$&amp;form.message_type=Response&amp;form.reply_code=Query%20Refused</link>
+        </drilldown>
       </chart>
     </panel>
   </row>
