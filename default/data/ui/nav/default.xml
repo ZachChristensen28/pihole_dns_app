@@ -1,4 +1,4 @@
-<nav search_view="search" color="#3C8DBB">
+<nav search_view="search">
   <view name="pihole_overview" default='true' />
   <view name="pihole_dns_activity" />
   <view name="pihole_query_log" />
