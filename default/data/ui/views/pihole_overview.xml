@@ -67,10 +67,7 @@
         <option name="underLabel">% Queries Blocked vs Yesterday</option>
         <option name="unit">%</option>
         <option name="useThousandSeparators">0</option>
-        <option name="drilldown">all</option>
-        <drilldown>
-          <link target="_blank">search?q=%7C%20from%20datamodel:Network_Resolution.DNS%20%20%0A%7C%20search%20sourcetype=pihole%0A%7C%20top%20src&amp;earliest=$global_time_tok.earliest$&amp;latest=$global_time_tok.latest$</link>
-        </drilldown>
+        <option name="drilldown">none</option>
       </single>
     </panel>
     <panel>
@@ -92,16 +89,34 @@
   </row>
   <row>
     <panel>
+      <title>DNS Queries Today vs Month Average</title>
+      <input type="dropdown" token="avg">
+        <label>Average Type</label>
+        <choice value="both">Both</choice>
+        <choice value="mean">Mean</choice>
+        <choice value="median">Median</choice>
+        <default>mean</default>
+        <change>
+          <condition value="both">
+            <set token="avg_tok" submit="true">avg(prior) as "Month Mean", median(prior) as "Month Median"</set>
+          </condition>
+          <condition value="mean">
+            <set token="avg_tok" submit="true">avg(prior) as "Month Mean"</set>
+          </condition>
+          <condition value="median">
+            <set token="avg_tok" submit="true">median(prior) as "Month Median"</set>
+          </condition>
+        </change>
+      </input>
       <chart>
-        <title>DNS Queries Today vs Month Average</title>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
 | rename DNS.* as *
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
-| timechart span=1h sum(eval(if(message_type=="Query",'count',0))) as totalQueries, sum(eval(if(reply_code=="Query Refused", 'count',0))) as totalBlocked by series
+| timechart span=1h sum(count) by series
 | eval Hour=strftime(_time, "%H")
-| stats median("totalBlocked: prior") as "Blocked Avg", median("totalQueries: prior") as "Queries Avg", sum("totalBlocked: today") as "Blocked Today", sum("totalQueries: today") as "Queries Today" by Hour</query>
+| stats $avg_tok$, perc5(prior) as "Lower Predict", perc95(prior) as "Upper Predict", sum(today) as "Queries Today" by Hour</query>
           <earliest>-4h@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -123,7 +138,7 @@
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
         <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.overlayFields">"Blocked Avg","Queries Avg"</option>
+        <option name="charting.chart.overlayFields">"Lower Predict","Upper Predict","Month Median","Month Mean"</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
@@ -139,6 +154,7 @@
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
+        <option name="charting.seriesColors">[0xF3BF75,0xAF575A,0xEC9960,0x4FA484,0x006D9C]</option>
       </chart>
     </panel>
   </row>
