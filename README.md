@@ -6,7 +6,7 @@ This app was designed with efficiency in mind. It leverages the CIM accelerated 
 
 Info | Description
 ------|----------
-Version | 2.1.1
+Version | 2.1.1 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole v4.3.2](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
@@ -19,7 +19,7 @@ Version 2.1.1
 ## Requirements
 
 - Install [Splunk Common Information Model](https://splunkbase.splunk.com/app/1621/)
-- Install [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns)
+- Install [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) also located on [Splunkbase](https://splunkbase.splunk.com/app/4505/)
 - Install [Force Directed App for Splunk](https://splunkbase.splunk.com/app/3767/)
 
 ## Setup
