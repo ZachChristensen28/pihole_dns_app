@@ -28,7 +28,7 @@
       <title>Source IP</title>
       <single>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ by DNS.src
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ by DNS.src
 | rename DNS.* as *
 | fields src</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -41,7 +41,7 @@
       <title>Query</title>
       <single>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.query
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.query
 | rename DNS.* as *
 | fields query</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -55,7 +55,7 @@
       <title>Query Type</title>
       <single>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.record_type
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.record_type
 | rename DNS.* as *
 | fields record_type</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -69,7 +69,7 @@
       <title>Query Action</title>
       <single>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count values(DNS.dest) as dest from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ NOT DNS.dest=unknown
+          <query>| tstats count values(DNS.dest) as dest from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ NOT DNS.dest=unknown
 | eval dest=mvjoin(dest, " &amp; ")
 | eval queryAction=if(isnotnull(dest),"Forwarded to -&gt; ".dest,"Responded from Cache")
 | fields queryAction</query>
@@ -84,7 +84,7 @@
       <title>Reply Description</title>
       <single>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response $txn_tok$ by DNS.reply_code
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response $txn_tok$ by DNS.reply_code
 | rename DNS.* as *
 | fields reply_code</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -116,7 +116,7 @@
     <panel>
       <viz type="force_directed_viz.force_directed">
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ DNS.answer!=unknown by DNS.src, DNS.query, DNS.answer
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ DNS.answer!=unknown by DNS.src, DNS.query, DNS.answer
 | rename DNS.* as *
 | eval answer=if(answer=="0.0.0.0", "Pi-holed!", answer)
 | rename src as node00, answer as node01, query as node02

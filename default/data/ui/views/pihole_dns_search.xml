@@ -101,7 +101,7 @@
     <panel>
       <table>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t max(_time) as Time, values(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", values(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.src, DNS.query, DNS.answer, DNS.transaction_id
+          <query>| tstats max(_time) as Time, values(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", values(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.src, DNS.query, DNS.answer, DNS.transaction_id
 | rename DNS.* as *
 | rename src as "Source IP", answer as Answer, query as Query, transaction_id as "Transaction ID"
 | sort - Count
@@ -130,7 +130,7 @@
       <chart>
         <title>$src_disply_tok$</title>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
 | rename DNS.* as *
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
@@ -180,7 +180,7 @@
     <panel>
       <map>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
 | rename DNS.* as *
 | iplocation answer
 | geostats globallimit=0 sum(count) by query</query>

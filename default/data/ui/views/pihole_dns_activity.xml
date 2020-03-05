@@ -14,7 +14,7 @@
       <title>Query Types</title>
       <chart>
         <search>
-          <query>| tstats local=f prestats=t summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by DNS.record_type
+          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by DNS.record_type
 | rename DNS.* as *
 | rename record_type as "Query Types"
 | chart count by "Query Types"</query>
@@ -60,7 +60,7 @@
       <title>Responses</title>
       <chart>
         <search>
-          <query>| tstats local=f prestats=t summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response by DNS.reply_code
+          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response by DNS.reply_code
 | rename DNS.* as *
 | rename reply_code as "Responses"
 | chart count by "Responses"</query>
@@ -111,7 +111,7 @@
       <title>Top Queries</title>
       <table>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="Query Refused" by DNS.query, DNS.reply_code
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="Query Refused" by DNS.query, DNS.reply_code
 | rename DNS.* as *
 | rename query as Query
 | stats sum(count) as Count, sum(eval(if(reply_code!="No Error", 'count', 0))) as Errors by Query
@@ -136,7 +136,7 @@
       <title>Top Blocked Queries</title>
       <table>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count as Count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.query
+          <query>| tstats count as Count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.query
 | rename DNS.* as *
 | rename query as Query
 | sort - Count</query>
@@ -156,7 +156,7 @@
       <title>Client Errors</title>
       <chart>
         <search>
-          <query>| tstats summariesonly=t allow_old_summaries=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" by DNS.src
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" by DNS.src
 | rename DNS.* as *
 | rename src as "Source IP", count as "# of Errors"</query>
           <earliest>-1d@d</earliest>
