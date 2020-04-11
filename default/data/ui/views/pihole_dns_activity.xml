@@ -116,8 +116,8 @@
 | rename query as Query
 | stats sum(count) as Count, sum(eval(if(reply_code!="No Error", 'count', 0))) as Errors by Query
 | sort - Count</query>
-          <earliest>-1d@d</earliest>
-          <latest>@d</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">10</option>
@@ -159,8 +159,8 @@
           <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" by DNS.src
 | rename DNS.* as *
 | rename src as "Source IP", count as "# of Errors"</query>
-          <earliest>-1d@d</earliest>
-          <latest>@d</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
