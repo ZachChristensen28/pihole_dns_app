@@ -8,18 +8,17 @@ This app was designed with efficiency in mind. It leverages the CIM accelerated 
 
 \*\***_NOTICE_**\*\*
 
-Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) to fix the issue in Splunk. 
+Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) to fix the issue in Splunk.
 
 Info | Description
 ------|----------
-Version | 2.1.1 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.2 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole v5.0](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```
-Version 2.1.1
-- Updated README
-- Updated visualizations to no longer required Data models to be accelerated to function.
+Version 2.1.2
+- Fixed Broken Drilldown on DNS Search Page.
 ```
 
 ## Requirements
@@ -43,3 +42,11 @@ This can be done from the web interface by first navigating to the Pihole DNS Ap
 Before enabling Data model acceleration, ensure your dns index has been whitelisted on the CIM add-on. Navigate to Apps > Manage Apps. Find the App "Splunk Common Information Model" and click `set up` on the right side. Select the "Network Resolution" and ensure the `indexes whitelist` contain the dns index being used.
 
 Enabling Data model acceleration will enable the searches to perform much more efficiently. To do this, select Settings > Data Models. Then click "Edit" for the `Network Resolution (DNS)` data model > Click "Edit Acceleration". Then enable the data model acceleration.
+
+## Versions
+
+```
+Version 2.1.1
+- Updated README
+- Updated visualizations to no longer required Data models to be accelerated to function.
+```
