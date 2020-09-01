@@ -31,6 +31,7 @@
 | stats dc(dest_nt_host) as user_count</query>
         </search>
         <option name="drilldown">none</option>
+        <option name="height">150</option>
         <option name="refresh.display">progressbar</option>
         <option name="status_indicator_app.status_indicator.colorBy">static_color</option>
         <option name="status_indicator_app.status_indicator.fillTarget">background</option>
@@ -55,6 +56,7 @@
 | eval icon="history"</query>
         </search>
         <option name="drilldown">none</option>
+        <option name="height">150</option>
         <option name="status_indicator_app.status_indicator.colorBy">static_color</option>
         <option name="status_indicator_app.status_indicator.fillTarget">background</option>
         <option name="status_indicator_app.status_indicator.fixIcon">search</option>
