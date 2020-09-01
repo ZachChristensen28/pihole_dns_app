@@ -1,0 +1,116 @@
+<form theme="dark" hideFilters="true">
+  <label>Pihole DHCP Overview</label>
+  <search id="base_search">
+    <query>| tstats latest(All_Sessions.dest_ip) as "IP Address", latest(All_Sessions.dest_mac) as "MAC Address" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host</query>
+    <earliest>$global_time_tok.earliest$</earliest>
+    <latest>$global_time_tok.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <search id="base_search_lease">
+    <query>`pihole_dhcp_index` sourcetype=pihole:dhcp range_start=* range_end=* lease_time=*
+| stats latest(lease_time) as lease_time, latest(range_start) as range_start, latest(range_end) as range_end</query>
+    <earliest>$global_time_tok.earliest$</earliest>
+    <latest>$global_time_tok.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="global_time_tok" searchWhenChanged="true">
+      <label></label>
+      <default>
+        <earliest>-7d@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>DHCP Leases - Last 7 Days</title>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="base_search">
+          <query>| `drop_dm_object_name(All_Sessions)`
+| stats dc(dest_nt_host) as user_count</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">150</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">static_color</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">background</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">users</option>
+        <option name="status_indicator_app.status_indicator.icon">fix_icon</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#006d9c</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+    <panel>
+      <title>Lease Duration</title>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="base_search_lease">
+          <query>
+| stats values(lease_time) as lease_time
+| eval icon="history"</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">150</option>
+        <option name="status_indicator_app.status_indicator.colorBy">static_color</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">background</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">search</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#53a051</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search base="base_search">
+          <query>| `drop_dm_object_name(All_Sessions)`
+| rename dest_nt_host as Hostname
+| streamstats count as "#"
+| fields "#" Hostname "IP Address" "MAC Address"</query>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <title>IP Range</title>
+        <search base="base_search_lease">
+          <query>| eval "IP Range"=range_start." - ".range_end
+| fields "IP Range"</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">184</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">static_color</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">server</option>
+        <option name="status_indicator_app.status_indicator.icon">fix_icon</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#ffffff</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+  </row>
+</form>

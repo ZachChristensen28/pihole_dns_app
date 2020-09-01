@@ -103,10 +103,11 @@
         <search>
           <query>| tstats max(_time) as Time, values(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", values(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.src, DNS.query, DNS.answer, DNS.transaction_id
 | rename DNS.* as *
+| `pihole_enrich_hostname(src)`
 | rename src as "Source IP", answer as Answer, query as Query, transaction_id as "Transaction_ID"
 | sort - Count
 | eval Forwarded=if(Forwarded=="unknown","Not Forwarded",Forwarded), Time=strftime(Time, "%c")
-| fields Time, "Source IP", Forwarded, "Message Type", "Record Type", Query, Answer, "Reply Code", "Transaction_ID", Count</query>
+| fields Time, "Source IP", Hostname, Forwarded, "Message Type", "Record Type", Query, Answer, "Reply Code", "Transaction_ID", Count</query>
           <earliest>$gloabl_time_tok.earliest$</earliest>
           <latest>$gloabl_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
