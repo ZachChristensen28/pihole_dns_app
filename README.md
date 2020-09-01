@@ -12,13 +12,17 @@ Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pi
 
 Info | Description
 ------|----------
-Version | 2.1.2 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.3 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole v5.0](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
-```
-Version 2.1.2
-- Fixed Broken Drilldown on DNS Search Page.
+```TEXT
+Version 2.1.3
+- Added DHCP Overview Dashboard.
+- If DHCP is being used, IP address will be enriched with hostnames automatically.
+- Added more colors to dashboards.
+
+* New requirement added for Status Indicator - Custom Visualization
 ```
 
 ## Requirements
@@ -26,6 +30,7 @@ Version 2.1.2
 - Install [Splunk Common Information Model](https://splunkbase.splunk.com/app/1621/)
 - Install [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) also located on [Splunkbase](https://splunkbase.splunk.com/app/4505/)
 - Install [Force Directed App for Splunk](https://splunkbase.splunk.com/app/3767/)
+- Install [Status Indicator - Custom Visualizatioin](https://splunkbase.splunk.com/app/3119/)
 
 ## Setup
 
@@ -33,9 +38,9 @@ To ensure this App functions efficiently, it is important to update a few variab
 
 ### Update Default Macro
 
-This app ships with the \`pihole_index\` macro. The default behavior is `index=*`. It is recommended to update this macro to search the appropriate index.
+This app ships with two macros: \`pihole_index\` and \`pihole_dhcp_index\`. The default behavior is `index=*` for the pihole_index macro with the other defaulting to the value of the pihole_index macro. It is recommended to update these macro to search the appropriate indexes.
 
-This can be done from the web interface by first navigating to the Pihole DNS App. Then Select at the top Settings > Advanced Search > Search macros (Make sure the Pihole app is selected in the App dropdown menu). Click the `pihole_index` macro and update as necessary.
+This can be done from the web interface by first navigating to the Pihole DNS App. Then Select at the top Settings > Advanced Search > Search macros (Make sure the Pihole app is selected in the App dropdown menu). Click the `pihole_index` or `pihole_dhcp_index` macro and update as necessary.
 
 ### Enable Data Model Acceleration
 
@@ -45,7 +50,10 @@ Enabling Data model acceleration will enable the searches to perform much more e
 
 ## Versions
 
-```
+```TEXT
+Version 2.1.2
+- Fixed Broken Drilldown on DNS Search Page.
+
 Version 2.1.1
 - Updated README
 - Updated visualizations to no longer required Data models to be accelerated to function.
