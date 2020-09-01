@@ -7,6 +7,5 @@
     <view name="pihole_dns_search" />
   	<view name="pihole_transaction_search" />
   </collection>
-  <view name="dashboards" />
   <view name="search" />
 </nav>
