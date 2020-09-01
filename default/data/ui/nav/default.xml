@@ -2,10 +2,10 @@
   <view name="pihole_overview" default='true' />
   <view name="pihole_dns_activity" />
   <view name="pihole_query_log" />
+  <view name="pihole_dhcp_overview" />
   <collection label="Pihole Search">
     <view name="pihole_dns_search" />
   	<view name="pihole_transaction_search" />
   </collection>
-  <view name="dashboards" />
   <view name="search" />
 </nav>

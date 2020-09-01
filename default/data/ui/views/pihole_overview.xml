@@ -1,4 +1,4 @@
-<form theme="dark">
+<form theme="dark" hideFilters="true">
   <label>Pihole Overview</label>
   <fieldset submitButton="false">
     <input type="time" token="global_time_tok" searchWhenChanged="true">
@@ -25,9 +25,9 @@
           <latest>now</latest>
         </search>
         <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
+        <option name="colorMode">block</option>
         <option name="drilldown">none</option>
-        <option name="rangeColors">["0x53a051","0x006d9c"]</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
         <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">0</option>
@@ -35,7 +35,7 @@
         <option name="trendColorInterpretation">inverse</option>
         <option name="trendDisplayMode">absolute</option>
         <option name="underLabel">Total Queries vs Yesterday</option>
-        <option name="useColors">0</option>
+        <option name="useColors">1</option>
       </single>
     </panel>
     <panel>
@@ -60,7 +60,9 @@
           <earliest>@d</earliest>
           <latest>now</latest>
         </search>
-        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="colorMode">block</option>
+        <option name="rangeColors">["0xdc4e41","0xdc4e41"]</option>
+        <option name="useColors">1</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">0</option>
         <option name="trendDisplayMode">absolute</option>
@@ -78,7 +80,9 @@
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
         </search>
-        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="colorMode">block</option>
+        <option name="rangeColors">["0x006d9c","0x006d9c"]</option>
+        <option name="useColors">1</option>
         <option name="underLabel">Total Clients</option>
         <option name="drilldown">all</option>
         <drilldown>
@@ -165,11 +169,13 @@
       <title>Top 10 Sources</title>
       <table>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") by _time, DNS.src, DNS.message_type, DNS.reply_code span=30m
-| rename DNS.* as *
-| stats sparkline(sum(eval(if(message_type=="Query",'count',0))), 30m) as Sparkline, sum(eval(if(message_type=="Query",'count',0))) as "# of Queries", sum(eval(if(reply_code=="Query Refused",'count',0))) as "# of Blocked Queries" by src
-| eval "% Blocked"=round(('# of Blocked Queries'/'# of Queries')*100, 0)
+          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") by _time, DNS.src, DNS.message_type, DNS.reply_code span=30m 
+| rename DNS.* as * 
+| stats sparkline(sum(eval(if(message_type=="Query",'count',0))), 30m) as Sparkline, sum(eval(if(message_type=="Query",'count',0))) as "# of Queries", sum(eval(if(reply_code=="Query Refused",'count',0))) as "# of Blocked Queries" by src 
+| eval "% Blocked"=round(('# of Blocked Queries'/'# of Queries')*100, 0) 
+| `pihole_enrich_hostname(src)`
 | rename src as "Source IP"
+| fields "Source IP", Hostname, Sparkline, "# of Queries", "# of Blocked Queries", "% Blocked"
 | sort limit=10 - "# of Queries"</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -178,6 +184,10 @@
           <option name="precision">0</option>
           <option name="unit">%</option>
           <option name="useThousandSeparators">false</option>
+        </format>
+        <format type="color" field="% Blocked">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax"></scale>
         </format>
         <option name="drilldown">cell</option>
         <drilldown>
@@ -191,7 +201,9 @@
         <search>
           <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.src, DNS.query
 | rename DNS.* as *
-| chart limit=0 count over query by src
+| `pihole_enrich_hostname(src)`
+| eval Host=coalesce(Hostname,src)
+| chart limit=0 count over query by Host
 | addtotals
 | sort 10 -Total
 | fields - Total
