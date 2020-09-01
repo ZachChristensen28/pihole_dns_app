@@ -1,4 +1,4 @@
-<form theme="dark">
+<form theme="dark" hideFilters="true">
   <label>Pihole Overview</label>
   <fieldset submitButton="false">
     <input type="time" token="global_time_tok" searchWhenChanged="true">
