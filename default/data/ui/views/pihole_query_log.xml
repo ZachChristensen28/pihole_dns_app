@@ -98,7 +98,7 @@
           <query>| tstats max(_time) as _time, values(DNS.dest) as "Forwarded Destination" values(DNS.message_type) as "Message Type", values(DNS.record_type) as "Query Type", values(DNS.answer) as Answer, values(DNS.reply_code) as "Reply Code" from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.query!="unknown" by DNS.transaction_id, DNS.query, DNS.src
 | rename DNS.* as *
 | `pihole_enrich_hostname(src)`
-| eval Host=coalesce
+| eval Host=coalesce(Hostname,src)
 | rename query as Query, transaction_id as "Transaction_ID"
 | eval answer=if(answer=="0.0.0.0","Pi-Holed!",answer)
 | sort -_time
