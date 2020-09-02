@@ -12,20 +12,16 @@ Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pi
 
 Info | Description
 ------|----------
-Version | 2.1.3 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.4 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole v5.0](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.3
-- Added DHCP Overview Dashboard.
-- If DHCP is being used, IP address will be enriched with hostnames.
-- Added select enhancements to dashboards.
+Version 2.1.4
+New
 
-* New requirement added for Status Indicator - Custom Visualization.
-* New requirement for populating DHCP hostnames (if DHCP is being used).
-
-Note: Download the latest Pihole add-on for the new dashboards to work (see Requirements).
+Fixed
+- Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
 ```
 
 ## Requirements
@@ -64,6 +60,15 @@ Enabling Data model acceleration will enable the searches to perform much more e
 ## Versions
 
 ```TEXT
+Version 2.1.3
+- Added DHCP Overview Dashboard.
+- If DHCP is being used, IP address will be enriched with hostnames.
+- Added select enhancements to dashboards.
+
+* New requirement added for Status Indicator - Custom Visualization.
+* New requirement for populating DHCP hostnames (if DHCP is being used).
+
+Note: Download the latest Pihole add-on for the new dashboards to work (see Requirements).
 Version 2.1.2
 - Fixed Broken Drilldown on DNS Search Page.
 
