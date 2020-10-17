@@ -22,6 +22,7 @@ New
 
 Fixed
 - Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
+- Fixed missing "Transaction ID" field on Query log dashbaord
 ```
 
 ## Requirements

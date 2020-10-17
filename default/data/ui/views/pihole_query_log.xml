@@ -50,10 +50,10 @@
       <title>Queries by Source over Time</title>
       <chart>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by _time, DNS.src 
-| rename DNS.* as * 
-| `pihole_enrich_hostname(src)` 
-| eval Host=coalesce(Hostname,src) 
+          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by _time, DNS.src
+| rename DNS.* as *
+| `pihole_enrich_hostname(src)`
+| eval Host=coalesce(Hostname,src)
 | timechart useother=f count by Host</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -74,10 +74,10 @@
       <title>Blocked Queryies by Source over Time</title>
       <chart>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by _time, DNS.src 
-| rename DNS.* as * 
-| `pihole_enrich_hostname(src)` 
-| eval Host=coalesce(Hostname,src) 
+          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by _time, DNS.src
+| rename DNS.* as *
+| `pihole_enrich_hostname(src)`
+| eval Host=coalesce(Hostname,src)
 | timechart useother=f count by Host</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -102,7 +102,7 @@
 | rename query as Query, transaction_id as "Transaction_ID"
 | eval answer=if(answer=="0.0.0.0","Pi-Holed!",answer)
 | sort -_time
-| fields _time, Query, Host, "Forwarded Destination", "Message Type", "Query Type", Answer, "Reply Code", "Transaction ID"</query>
+| fields _time, Query, Host, "Forwarded Destination", "Message Type", "Query Type", Answer, "Reply Code", "Transaction_ID"</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -119,7 +119,7 @@
           <scale type="sharedCategory"></scale>
         </format>
         <drilldown>
-          <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.Transaction%20ID$</link>
+          <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.Transaction_ID$</link>
         </drilldown>
       </table>
     </panel>
