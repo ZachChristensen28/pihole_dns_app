@@ -18,8 +18,6 @@ App has a web UI | Yes. This App contains views.
 
 ```TEXT
 Version 2.1.4
-New
-
 Fixed
 - Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
 - Fixed missing "Transaction ID" field on Query log dashbaord
