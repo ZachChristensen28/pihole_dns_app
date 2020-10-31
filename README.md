@@ -12,20 +12,15 @@ Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pi
 
 Info | Description
 ------|----------
-Version | 2.1.3 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.4 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole v5.0](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.3
-- Added DHCP Overview Dashboard.
-- If DHCP is being used, IP address will be enriched with hostnames.
-- Added select enhancements to dashboards.
-
-* New requirement added for Status Indicator - Custom Visualization.
-* New requirement for populating DHCP hostnames (if DHCP is being used).
-
-Note: Download the latest Pihole add-on for the new dashboards to work (see Requirements).
+Version 2.1.4
+Fixed
+- Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
+- Fixed missing "Transaction ID" field on Query log dashbaord
 ```
 
 ## Requirements
@@ -57,13 +52,22 @@ This can be done from the web interface by first navigating to the Pihole DNS Ap
 
 ### Enable Data Model Acceleration
 
-Before enabling Data model acceleration, ensure your dns index has been whitelisted on the CIM add-on. Navigate to Apps > Manage Apps. Find the App "Splunk Common Information Model" and click `set up` on the right side. Select the "Network Resolution" and ensure the `indexes whitelist` contain the dns index being used.
+Before enabling Data model acceleration, ensure your dns index has been whitelisted on the CIM add-on. Navigate to Apps > Manage Apps. Find the App "Splunk Common Information Model" and click `set up` on the right side. Select the "Network Resolution" and ensure the index list contain the dns index being used.
 
 Enabling Data model acceleration will enable the searches to perform much more efficiently. To do this, select Settings > Data Models. Then click "Edit" for the `Network Resolution (DNS)` data model > Click "Edit Acceleration". Then enable the data model acceleration.
 
 ## Versions
 
 ```TEXT
+Version 2.1.3
+- Added DHCP Overview Dashboard.
+- If DHCP is being used, IP address will be enriched with hostnames.
+- Added select enhancements to dashboards.
+
+* New requirement added for Status Indicator - Custom Visualization.
+* New requirement for populating DHCP hostnames (if DHCP is being used).
+
+Note: Download the latest Pihole add-on for the new dashboards to work (see Requirements).
 Version 2.1.2
 - Fixed Broken Drilldown on DNS Search Page.
 
