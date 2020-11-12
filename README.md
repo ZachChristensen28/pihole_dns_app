@@ -12,15 +12,13 @@ Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pi
 
 Info | Description
 ------|----------
-Version | 2.1.4 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.5 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole v5.0](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.4
-Fixed
-- Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
-- Fixed missing "Transaction ID" field on Query log dashbaord
+Version 2.1.5
+
 ```
 
 ## Requirements
@@ -59,6 +57,11 @@ Enabling Data model acceleration will enable the searches to perform much more e
 ## Versions
 
 ```TEXT
+Version 2.1.4
+Fixed
+- Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
+- Fixed missing "Transaction ID" field on Query log dashbaord
+
 Version 2.1.3
 - Added DHCP Overview Dashboard.
 - If DHCP is being used, IP address will be enriched with hostnames.
