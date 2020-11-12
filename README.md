@@ -19,6 +19,8 @@ App has a web UI | Yes. This App contains views.
 ```TEXT
 Version 2.1.5
 
+Updates
+- Updated DHCP enrichment macro to be simpler.
 ```
 
 ## Requirements
@@ -39,6 +41,7 @@ Search Name | Description | Default Schedule
 ----------- | ----------- | ----------------
 Pihole - Create DHCP Lease Lookup | Only needs to be run once. This will create the initial lookup for DHCP leases. Defaults to the last 7 days. | None
 Pihole - DHCP Leases Lookup - Gen | Recurring search to keep DHCP leases up to date. | Runs Hourly
+Pihole - DHCP Remove Old Leases (Optional) | This search will remove leases that have not been updated for a period of time. The default is two weeks. | Once per day
 
 ### Update Default Macro
 
