@@ -19,7 +19,10 @@ App has a web UI | Yes. This App contains views.
 ```TEXT
 Version 2.1.5
 
-Updates
+New:
+- Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on. 
+
+Fixed:
 - Updated DHCP enrichment macro to be simpler.
 ```
 
@@ -43,13 +46,13 @@ Pihole - Create DHCP Lease Lookup | Only needs to be run once. This will create 
 Pihole - DHCP Leases Lookup - Gen | Recurring search to keep DHCP leases up to date. | Runs Hourly
 Pihole - DHCP Remove Old Leases (Optional) | This search will remove leases that have not been updated for a period of time. The default is two weeks. | Once per day
 
-### Update Default Macro
+### Update Default Macros
 
 To ensure this App functions efficiently, it is important to update a few variables.
 
-This app ships with two macros: \`pihole_index\` and \`pihole_dhcp_index\`. The default behavior is `index=*` for the pihole_index macro with the other defaulting to the value of the pihole_index macro. It is recommended to update these macro to search the appropriate indexes.
+This app ships with two macros: \`pihole_index\`, \`pihole_dhcp_index\` and \`pihole_system_index\`. The default behavior is `index=*` for the pihole_index macro with the others defaulting to the value of the pihole_index macro. It is recommended to update these macro to search the appropriate indexes.
 
-This can be done from the web interface by first navigating to the Pihole DNS App. Then Select at the top Settings > Advanced Search > Search macros (Make sure the Pihole app is selected in the App dropdown menu). Click the `pihole_index` or `pihole_dhcp_index` macro and update as necessary.
+This can be done from the web interface by first navigating to the Pihole DNS App. Then Select at the top Settings > Advanced Search > Search macros (Make sure the Pihole app is selected in the App dropdown menu). Click the `pihole_index`, `pihole_dhcp_index`, or `pihole_system_index` macro and update as necessary.
 
 ### Enable Data Model Acceleration
 
