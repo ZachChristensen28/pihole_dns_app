@@ -48,11 +48,14 @@ Pihole - DHCP Remove Old Leases (Optional) | This search will remove leases that
 
 ### Update Default Macros
 
-To ensure this App functions efficiently, it is important to update a few variables.
+(Recommended) To ensure this App functions efficiently, it is important to update a few search macros. Change the following macros to their appropriate values:
 
-This app ships with two macros: \`pihole_index\`, \`pihole_dhcp_index\` and \`pihole_system_index\`. The default behavior is `index=*` for the pihole_index macro with the others defaulting to the value of the pihole_index macro. It is recommended to update these macro to search the appropriate indexes.
-
-This can be done from the web interface by first navigating to the Pihole DNS App. Then Select at the top Settings > Advanced Search > Search macros (Make sure the Pihole app is selected in the App dropdown menu). Click the `pihole_index`, `pihole_dhcp_index`, or `pihole_system_index` macro and update as necessary.
+Macro | Default | Description
+----- | ------- | -----------
+`pihole_index` | index=* | Update to the specific index being used for the "pihole" sourcetype.
+`pihole_system_index` | \`pihole_index\` | Update to the specific index being used for the "pihole:system" sourcetype, if different from the main pihole index.
+`pihole_dhcp_index` | \`pihole_index\` | Update to the specific index being used for the "pihole:dhcp" sourcetype, if different from the main pihole index.
+`pihole_dhcp_lease_retention` | 1209600 | Default retention time (in seconds) for DHCP hosts. Update as needed.
 
 ### Enable Data Model Acceleration
 
