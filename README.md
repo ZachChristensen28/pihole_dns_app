@@ -59,9 +59,13 @@ Macro | Default | Description
 
 ### Enable Data Model Acceleration
 
-Before enabling Data model acceleration, ensure your dns index has been whitelisted on the CIM add-on. Navigate to Apps > Manage Apps. Find the App "Splunk Common Information Model" and click `set up` on the right side. Select the "Network Resolution" and ensure the index list contain the dns index being used.
+Before enabling Data model acceleration, ensure your dns index has been included on the CIM add-on list of indexes. Navigate to Apps > Manage Apps. Find the App "Splunk Common Information Model" and click `set up` on the right side. Select the "Network Resolution" and ensure the index list contains the dns index being used.
 
-Enabling Data model acceleration will enable the searches to perform much more efficiently. To do this, select Settings > Data Models. Then click "Edit" for the `Network Resolution (DNS)` data model > Click "Edit Acceleration". Then enable the data model acceleration.
+Enabling Data model acceleration will enable the searches to perform much more efficiently, however, it is not required. To do this, select Settings > Data Models. Then click "Edit" for the `Network Resolution (DNS)` data model > Click "Edit Acceleration". Then enable the data model acceleration.
+
+## Bugs/Feature Requests
+
+Please open an issue or submit a feature requests at [github.com](https://github.com/ZachChristensen28/pihole_dns_app)
 
 ## Versions
 
