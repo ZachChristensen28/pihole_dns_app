@@ -2,18 +2,18 @@
 
 ![GitHub](https://img.shields.io/github/license/zachchristensen28/pihole_dns_app)
 
-Visualize your pihole in Splunk! If you've landed on this app, it's probably because you are running your own super awesome pi-hole server. If not, check it out! https://pi-hole.net/
+Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably because you are running your own super awesome Pi-hole® server. If not, check it out! https://pi-hole.net/
 
 This app was designed with efficiency in mind. It leverages the CIM accelerated data to quickly display the dashboards, no matter the size of your environment. This app works with the [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) add-on which provides the field extractions necessary for this app.  
 
 \*\***_NOTICE_**\*\*
 
-Pihole v5 changed the way blocked queries are logged. Download the latest [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) to fix the issue in Splunk.
+Pi-hole® v5 changed the way blocked queries are logged. Download the latest [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) to fix the issue in Splunk.
 
 Info | Description
 ------|----------
 Version | 2.1.5 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole v5.0](https://pi-hole.net/)
+Vendor Product Version | [Pi-hole® v5.0](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
