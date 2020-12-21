@@ -9,6 +9,21 @@
       </default>
     </input>
   </fieldset>
+  <search id="system_base">
+    <query>`pihole_system_index` sourcetype=pihole:system
+| stats latest(domains_on_blocklist) as domains_on_blocklist, latest(gravity_updated) as gravity_updated</query>
+    <earliest>$global_time_tok.earliest$</earliest>
+    <latest>$global_time_tok.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+    <progress>
+      <condition match="'job.resultCount' > 0">
+        <set token="show_system">true</set>
+      </condition>
+      <condition>
+        <unset token="show_system"/>
+      </condition>
+    </progress>
+  </search>
   <row>
     <panel>
       <title># of Queries vs Yesterday</title>
@@ -39,7 +54,7 @@
       </single>
     </panel>
     <panel>
-      <title>% Queries Pi-holed (Blocked) vs Yesterday</title>
+      <title>% Queries Blocked vs Yesterday</title>
       <single>
         <search>
           <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.reply_code="Query Refused" OR DNS.message_type=query) earliest=-1d@d latest=-24h by DNS.message_type, DNS.reply_code
@@ -81,13 +96,53 @@
           <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="colorMode">block</option>
-        <option name="rangeColors">["0x006d9c","0x006d9c"]</option>
-        <option name="useColors">1</option>
-        <option name="underLabel">Total Clients</option>
         <option name="drilldown">all</option>
+        <option name="rangeColors">["0x006d9c","0x006d9c"]</option>
+        <option name="underLabel">Total Clients</option>
+        <option name="useColors">1</option>
         <drilldown>
           <link target="_blank">search?q=%7C%20from%20datamodel:Network_Resolution.DNS%20%20%0A%7C%20search%20sourcetype=pihole%0A%7C%20top%20src&amp;earliest=$global_time_tok.earliest$&amp;latest=$global_time_tok.latest$</link>
         </drilldown>
+      </single>
+    </panel>
+    <panel depends="$show_system$">
+      <title>Domains on Blocklist</title>
+      <single>
+        <search base="system_base">
+          <query>| fields domains_on_blocklist</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xf8be34","0xf8be34"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Domains on Blocklist</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel depends="$show_system$">
+      <title>Gravity List Last Update</title>
+      <single>
+        <search base="system_base">
+          <query>fields gravity_updated
+| convert timeformat="%b %d" ctime(gravity_updated)</query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="underLabel">Last Updated</option>
+        <option name="useColors">0</option>
       </single>
     </panel>
   </row>
