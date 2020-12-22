@@ -12,18 +12,12 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [TA
 
 Info | Description
 ------|----------
-Version | 2.1.5 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole® v5.0](https://pi-hole.net/)
+Version | 2.1.6 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Vendor Product Version | [Pi-hole® v5.2](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.5
-
-New:
-- Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on. 
-
-Fixed:
-- Updated DHCP enrichment macro to be simpler.
+Version 2.1.6
 ```
 
 ## Requirements
@@ -70,6 +64,12 @@ Please open an issue or submit a feature requests at [github.com](https://github
 ## Versions
 
 ```TEXT
+Version 2.1.5
+New:
+- Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on. 
+Fixed:
+- Updated DHCP enrichment macro to be simpler.
+
 Version 2.1.4
 Fixed
 - Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
