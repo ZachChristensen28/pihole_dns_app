@@ -14,16 +14,16 @@
       <choice value="free">Free text</choice>
       <default>dhcp</default>
       <initialValue>dhcp</initialValue>
-             <change>
-         <condition value="dhcp">
-             <set token="show_source_dhcp">true</set>
-             <unset token="show_source_free"></unset>
-           </condition>
-           <condition value="free">
-             <set token="show_source_free">true</set>
-             <unset token="show_source_dhcp"></unset>
-           </condition>
-       </change>
+      <change>
+        <condition value="dhcp">
+          <set token="show_source_dhcp">true</set>
+          <unset token="show_source_free"></unset>
+        </condition>
+        <condition value="free">
+          <set token="show_source_free">true</set>
+          <unset token="show_source_dhcp"></unset>
+        </condition>
+      </change>
     </input>
     <input type="dropdown" token="src" depends="$show_source_dhcp$">
       <label>Source from DHCP</label>
@@ -46,9 +46,11 @@
         <query>| tstats latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
 | rename dest_nt_host as Hostname
 | fields  Hostname IP</query>
+        <earliest>$gloabl_time_tok.earliest$</earliest>
+        <latest>$gloabl_time_tok.latest$</latest>
       </search>
     </input>
-        <input type="text" token="src" depends="$show_source_free$">
+    <input type="text" token="src" depends="$show_source_free$">
       <label>Source free text</label>
       <default></default>
       <change>
