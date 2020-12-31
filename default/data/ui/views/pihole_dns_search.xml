@@ -43,7 +43,7 @@
       <fieldForLabel>Hostname</fieldForLabel>
       <fieldForValue>IP</fieldForValue>
       <search>
-        <query>| tstats latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
+        <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
 | rename dest_nt_host as Hostname
 | fields  Hostname IP</query>
         <earliest>$gloabl_time_tok.earliest$</earliest>
@@ -143,7 +143,7 @@
     <panel>
       <table>
         <search>
-          <query>| tstats max(_time) as Time, latest(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", latest(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", latest(DNS.answer) as answer, Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.transaction_id, DNS.src, DNS.query
+          <query>| tstats `pihole_summariesonly` max(_time) as Time, latest(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", latest(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", latest(DNS.answer) as answer, Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.transaction_id, DNS.src, DNS.query
 | `drop_dm_object_name(DNS)`
 | `pihole_enrich_hostname(src)`
 | rename src as "Source IP", answer as Answer, query as Query, transaction_id as "Transaction_ID"
@@ -173,7 +173,7 @@
       <chart>
         <title>$src_disply_tok$</title>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
 | rename DNS.* as *
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
@@ -223,7 +223,7 @@
     <panel>
       <map>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
 | rename DNS.* as *
 | iplocation answer
 | geostats globallimit=0 sum(count) by query</query>

@@ -17,7 +17,7 @@
       <fieldForLabel>host</fieldForLabel>
       <fieldForValue>host</fieldForValue>
       <search>
-        <query>| tstats count where `pihole_index` sourcetype=pihole by host</query>
+        <query>| tstats `pihole_summariesonly` count where `pihole_index` sourcetype=pihole by host</query>
         <earliest>$global_time_tok.earliest$</earliest>
         <latest>$global_time_tok.latest$</latest>
       </search>
@@ -28,7 +28,7 @@
       <title>Top Queries Allowed</title>
       <chart>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $host_tok$ by DNS.query
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $host_tok$ by DNS.query
 | rename DNS.* as *
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -45,7 +45,7 @@
       <title>Top Queries Blocked</title>
       <chart>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by DNS.query
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by DNS.query
 | rename DNS.* as *
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -64,7 +64,7 @@
       <title>Queries by Source over Time</title>
       <chart>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $host_tok$ by _time, DNS.src
+          <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $host_tok$ by _time, DNS.src
 | rename DNS.* as *
 | `pihole_enrich_hostname(src)`
 | eval Host=coalesce(Hostname,src)
@@ -88,7 +88,7 @@
       <title>Blocked Queryies by Source over Time</title>
       <chart>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by _time, DNS.src
+          <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by _time, DNS.src
 | rename DNS.* as *
 | `pihole_enrich_hostname(src)`
 | eval Host=coalesce(Hostname,src)
@@ -109,7 +109,7 @@
     <panel>
       <table>
         <search>
-          <query>| tstats max(_time) as _time, values(DNS.dest) as "Forwarded Destination" values(DNS.message_type) as "Message Type", values(DNS.record_type) as "Query Type", values(DNS.answer) as Answer, values(DNS.reply_code) as "Reply Code" from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.query!="unknown" $host_tok$ by DNS.transaction_id, DNS.query, DNS.src
+          <query>| tstats `pihole_summariesonly` max(_time) as _time, values(DNS.dest) as "Forwarded Destination" values(DNS.message_type) as "Message Type", values(DNS.record_type) as "Query Type", values(DNS.answer) as Answer, values(DNS.reply_code) as "Reply Code" from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.query!="unknown" $host_tok$ by DNS.transaction_id, DNS.query, DNS.src
 | rename DNS.* as *
 | `pihole_enrich_hostname(src)`
 | eval Host=coalesce(Hostname,src)
