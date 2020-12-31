@@ -21,7 +21,7 @@ Version 2.1.6
 
 New
 - Added dropdown on DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
-
+- Added ability to filter by Pi-hole in dashboards #17
 ```
 
 ## Requirements
