@@ -8,8 +8,48 @@
         <latest>now</latest>
       </default>
     </input>
-    <input type="text" token="src">
-      <label>Source</label>
+    <input type="radio" token="source_selector">
+      <label>Select source</label>
+      <choice value="dhcp">Populate from dhcp</choice>
+      <choice value="free">Free text</choice>
+      <default>dhcp</default>
+      <initialValue>dhcp</initialValue>
+             <change>
+         <condition value="dhcp">
+             <set token="show_source_dhcp">true</set>
+             <unset token="show_source_free"></unset>
+           </condition>
+           <condition value="free">
+             <set token="show_source_free">true</set>
+             <unset token="show_source_dhcp"></unset>
+           </condition>
+       </change>
+    </input>
+    <input type="dropdown" token="src" depends="$show_source_dhcp$">
+      <label>Source from DHCP</label>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="src_disply_tok" submit="false">Source = $value$</set>
+          <set token="src_tok" submit="false">(DNS.src=$value|s$)</set>
+          <set token="src_raw_tok" submit="false">(src=$value|s$)</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="src_disply_tok" submit="false">All Source IPs</set>
+          <set token="src_tok" submit="false"></set>
+          <set token="src_raw_tok" submit="false"></set>
+        </condition>
+      </change>
+      <fieldForLabel>Hostname</fieldForLabel>
+      <fieldForValue>IP</fieldForValue>
+      <search>
+        <query>| tstats latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
+| rename dest_nt_host as Hostname
+| fields  Hostname IP</query>
+      </search>
+    </input>
+        <input type="text" token="src" depends="$show_source_free$">
+      <label>Source free text</label>
       <default></default>
       <change>
         <condition match="len($value$) &gt; 0">
