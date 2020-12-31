@@ -48,7 +48,6 @@
         <earliest>$global_time_tok.earliest$</earliest>
         <latest>$global_time_tok.latest$</latest>
       </search>
-      <default></default>
       <change>
         <condition match="len($value$) &gt; 0">
           <set token="system_host_raw">$value$</set>
