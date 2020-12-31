@@ -10,7 +10,7 @@
     </input>
     <input type="radio" token="source_selector">
       <label>Select source</label>
-      <choice value="dhcp">Populate from dhcp</choice>
+      <choice value="dhcp">Populate from DHCP</choice>
       <choice value="free">Free text</choice>
       <default>dhcp</default>
       <initialValue>dhcp</initialValue>
