@@ -1,7 +1,7 @@
 <form theme="dark">
   <label>Pihole DNS Search</label>
   <fieldset submitButton="true">
-    <input type="time" token="gloabl_time_tok">
+    <input type="time" token="global_time_tok">
       <label></label>
       <default>
         <earliest>@d</earliest>
@@ -46,8 +46,8 @@
         <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
 | rename dest_nt_host as Hostname
 | fields  Hostname IP</query>
-        <earliest>$gloabl_time_tok.earliest$</earliest>
-        <latest>$gloabl_time_tok.latest$</latest>
+        <earliest>$global_time_tok.earliest$</earliest>
+        <latest>$global_time_tok.latest$</latest>
       </search>
     </input>
     <input type="text" token="src" depends="$show_source_free$">
@@ -150,8 +150,8 @@
 | sort - Time
 | eval Forwarded=if(Forwarded=="unknown","Not Forwarded",Forwarded), Time=strftime(Time, "%c")
 | fields Time, "Source IP", Hostname, Forwarded, "Message Type", "Record Type", Query, Answer, "Reply Code", "Transaction_ID", Count</query>
-          <earliest>$gloabl_time_tok.earliest$</earliest>
-          <latest>$gloabl_time_tok.latest$</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">5</option>
@@ -227,8 +227,8 @@
 | rename DNS.* as *
 | iplocation answer
 | geostats globallimit=0 sum(count) by query</query>
-          <earliest>$gloabl_time_tok.earliest$</earliest>
-          <latest>$gloabl_time_tok.latest$</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="drilldown">none</option>
         <option name="mapping.type">marker</option>
@@ -243,8 +243,8 @@
           <query>| from datamodel:"Network_Resolution"."DNS"
 | search sourcetype=pihole $src_raw_tok$ $dest_raw_tok$ $query_raw_tok$ $message_type_raw_tok$ $reply_code_raw_tok$
 | head 100</query>
-          <earliest>$gloabl_time_tok.earliest$</earliest>
-          <latest>$gloabl_time_tok.latest$</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="list.drilldown">full</option>
         <drilldown>
