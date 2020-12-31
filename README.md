@@ -18,6 +18,10 @@ App has a web UI | Yes. This App contains views.
 
 ```TEXT
 Version 2.1.6
+
+New
+- Added dropdown on DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
+
 ```
 
 ## Requirements
