@@ -18,6 +18,9 @@ App has a web UI | Yes. This App contains views.
 
 ```TEXT
 Version 2.1.6
+
+New
+- Added ability to filter by Pi-hole in dashboards #17
 ```
 
 ## Requirements

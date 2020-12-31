@@ -1,5 +1,20 @@
-<form theme="dark" hideFilters="true">
+<form theme="dark">
   <label>Pihole Overview</label>
+  <search id="system_base">
+    <query>`pihole_system_index` sourcetype=pihole:system
+| stats latest(domains_on_blocklist) as domains_on_blocklist, latest(gravity_updated) as gravity_updated by host</query>
+    <earliest>$global_time_tok.earliest$</earliest>
+    <latest>$global_time_tok.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+    <progress>
+      <condition match="'job.resultCount' &gt; 0">
+        <set token="show_system">true</set>
+      </condition>
+      <condition>
+        <unset token="show_system"></unset>
+      </condition>
+    </progress>
+  </search>
   <fieldset submitButton="false">
     <input type="time" token="global_time_tok" searchWhenChanged="true">
       <label></label>
@@ -8,30 +23,50 @@
         <latest>now</latest>
       </default>
     </input>
+    <input type="dropdown" token="host_tok" searchWhenChanged="true">
+      <label>Host</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <prefix>host="</prefix>
+      <suffix>"</suffix>
+      <fieldForLabel>host</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search>
+        <query>| tstats count where `pihole_index` sourcetype=pihole by host</query>
+        <earliest>$global_time_tok.earliest$</earliest>
+        <latest>$global_time_tok.latest$</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="system_host_tok" searchWhenChanged="true" depends="$show_system$">
+      <label>System Host</label>
+      <prefix>host="</prefix>
+      <suffix>"</suffix>
+      <fieldForLabel>host</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search>
+        <query>| tstats count where `pihole_system_index` sourcetype=pihole:system by host</query>
+        <earliest>$global_time_tok.earliest$</earliest>
+        <latest>$global_time_tok.latest$</latest>
+      </search>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="system_host_raw">$value$</set>
+        </condition>
+        <condition>
+          <unset token="system_host_raw" />
+        </condition>
+      </change>
+    </input>
   </fieldset>
-  <search id="system_base">
-    <query>`pihole_system_index` sourcetype=pihole:system
-| stats latest(domains_on_blocklist) as domains_on_blocklist, latest(gravity_updated) as gravity_updated</query>
-    <earliest>$global_time_tok.earliest$</earliest>
-    <latest>$global_time_tok.latest$</latest>
-    <sampleRatio>1</sampleRatio>
-    <progress>
-      <condition match="'job.resultCount' > 0">
-        <set token="show_system">true</set>
-      </condition>
-      <condition>
-        <unset token="show_system"/>
-      </condition>
-    </progress>
-  </search>
   <row>
     <panel>
       <title># of Queries vs Yesterday</title>
       <single>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query earliest=-1d@d latest=-24h
+          <query>| tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=-1d@d latest=-24h
 | append
-    [ tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query earliest=@d latest=now]
+    [ tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=@d latest=now]
 | appendcols
     [ makeresults
     | eval time=now()]
@@ -42,6 +77,7 @@
         <option name="colorBy">value</option>
         <option name="colorMode">block</option>
         <option name="drilldown">none</option>
+        <option name="height">150</option>
         <option name="rangeColors">["0x53a051","0x53a051"]</option>
         <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
@@ -57,13 +93,13 @@
       <title>% Queries Blocked vs Yesterday</title>
       <single>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.reply_code="Query Refused" OR DNS.message_type=query) earliest=-1d@d latest=-24h by DNS.message_type, DNS.reply_code
+          <query>| tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole (DNS.reply_code="Query Refused" OR DNS.message_type=query) earliest=-1d@d latest=-24h by DNS.message_type, DNS.reply_code
 | rename DNS.* as *
 | stats sum(eval(if(reply_code=="Query Refused",'count',0))) as totalBlocked, sum(eval(if(message_type=="Query",'count',0))) as totalQueries
 | eval "% Blocked"=round(((totalBlocked)/totalQueries)*100,0)
 | fields "% Blocked"
 | append
-    [ tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.reply_code="Query Refused" OR DNS.message_type=query) earliest=@d latest=now by DNS.message_type, DNS.reply_code
+    [ tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole (DNS.reply_code="Query Refused" OR DNS.message_type=query) earliest=@d latest=now by DNS.message_type, DNS.reply_code
     | rename DNS.* as *
     | stats sum(eval(if(reply_code=="Query Refused",'count',0))) as totalBlocked, sum(eval(if(message_type=="Query",'count',0))) as totalQueries
     | eval "% Blocked"=round(((totalBlocked)/totalQueries)*100,0)
@@ -78,6 +114,7 @@
         <option name="colorMode">block</option>
         <option name="rangeColors">["0xdc4e41","0xdc4e41"]</option>
         <option name="useColors">1</option>
+        <option name="height">150</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">0</option>
         <option name="trendDisplayMode">absolute</option>
@@ -91,12 +128,13 @@
       <title># of Clients</title>
       <single>
         <search>
-          <query>| tstats dc(DNS.src) as "Distinct Clients" from datamodel=Network_Resolution.DNS where sourcetype=pihole</query>
+          <query>| tstats dc(DNS.src) as "Distinct Clients" from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="colorMode">block</option>
         <option name="drilldown">all</option>
+        <option name="height">150</option>
         <option name="rangeColors">["0x006d9c","0x006d9c"]</option>
         <option name="underLabel">Total Clients</option>
         <option name="useColors">1</option>
@@ -108,8 +146,10 @@
     <panel depends="$show_system$">
       <title>Domains on Blocklist</title>
       <single>
+        <title>($system_host_raw$)</title>
         <search base="system_base">
-          <query>| fields domains_on_blocklist</query>
+          <query>| search $system_host_tok$
+| fields domains_on_blocklist</query>
         </search>
         <option name="colorBy">value</option>
         <option name="colorMode">block</option>
@@ -133,8 +173,10 @@
     <panel depends="$show_system$">
       <title>Gravity List Last Update</title>
       <single>
+        <title>($system_host_raw$)</title>
         <search base="system_base">
-          <query>fields gravity_updated
+          <query>| search $system_host_tok$
+|fields gravity_updated
 | convert timeformat="%b %d" ctime(gravity_updated)</query>
         </search>
         <option name="colorMode">block</option>
@@ -169,7 +211,7 @@
       </input>
       <chart>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+          <query>| tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
 | rename DNS.* as *
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
@@ -224,7 +266,7 @@
       <title>Top 10 Sources</title>
       <table>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") by _time, DNS.src, DNS.message_type, DNS.reply_code span=30m 
+          <query>| tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") by _time, DNS.src, DNS.message_type, DNS.reply_code span=30m 
 | rename DNS.* as * 
 | stats sparkline(sum(eval(if(message_type=="Query",'count',0))), 30m) as Sparkline, sum(eval(if(message_type=="Query",'count',0))) as "# of Queries", sum(eval(if(reply_code=="Query Refused",'count',0))) as "# of Blocked Queries" by src 
 | eval "% Blocked"=round(('# of Blocked Queries'/'# of Queries')*100, 0) 
@@ -254,7 +296,7 @@
       <chart>
         <title>Top 10 Blocked Queries</title>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.src, DNS.query
+          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.src, DNS.query
 | rename DNS.* as *
 | `pihole_enrich_hostname(src)`
 | eval Host=coalesce(Hostname,src)
