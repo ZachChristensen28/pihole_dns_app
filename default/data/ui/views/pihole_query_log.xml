@@ -9,7 +9,7 @@
       </default>
     </input>
     <input type="dropdown" token="host_tok" searchWhenChanged="true">
-      <label>Host</label>
+      <label>Pi-hole Server</label>
       <choice value="*">All</choice>
       <default>*</default>
       <prefix>host="</prefix>
