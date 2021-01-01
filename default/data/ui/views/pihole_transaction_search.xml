@@ -116,9 +116,9 @@
     <panel>
       <viz type="force_directed_viz.force_directed">
         <search>
-          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ DNS.answer!=unknown by DNS.src, DNS.query, DNS.answer
+          <query>| tstats `pihole_summariesonly` latest(DNS.reply_code) as reply_code, count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ by DNS.src, DNS.query, DNS.answer
 | `drop_dm_object_name(DNS)`
-| eval answer=if(answer=="0.0.0.0", "Pi-holed!", answer)
+| eval answer=if(reply_code=="Query Refused","Pi-Holed!",answer)
 | rename src as node00, answer as node01, query as node02
 | eval node00="Source IP: ".node00, node01="Reply: ".node01, node02="Query: ".node02</query>
           <earliest>$global_time_tok.earliest$</earliest>
