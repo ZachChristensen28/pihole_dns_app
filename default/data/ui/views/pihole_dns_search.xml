@@ -33,11 +33,13 @@
           <set token="src_disply_tok" submit="false">Source = $value$</set>
           <set token="src_tok" submit="false">(DNS.src=$value|s$)</set>
           <set token="src_raw_tok" submit="false">(src=$value|s$)</set>
+          <set token="show_src_row">true</set>
         </condition>
         <condition match="len($value$) == 0">
           <set token="src_disply_tok" submit="false">All Source IPs</set>
           <set token="src_tok" submit="false"></set>
           <set token="src_raw_tok" submit="false"></set>
+          <unset token="show_src_row"></unset>
         </condition>
       </change>
       <fieldForLabel>Hostname</fieldForLabel>
@@ -58,11 +60,13 @@
           <set token="src_disply_tok" submit="false">Source = $value$</set>
           <set token="src_tok" submit="false">(DNS.src=$value|s$)</set>
           <set token="src_raw_tok" submit="false">(src=$value|s$)</set>
+          <set token="show_src_row">true</set>
         </condition>
         <condition match="len($value$) == 0">
           <set token="src_disply_tok" submit="false">All Source IPs</set>
           <set token="src_tok" submit="false"></set>
           <set token="src_raw_tok" submit="false"></set>
+          <unset token="show_src_row"></unset>
         </condition>
       </change>
     </input>
@@ -139,6 +143,40 @@
       </change>
     </input>
   </fieldset>
+  <row depends="$show_src_row$">
+    <panel>
+      <title>Top Queries Allowed by Source</title>
+      <chart>
+        <search>
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $src_tok$ by DNS.query
+| `drop_dm_object_name(DNS)` 
+| sort 10 -count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Top Queries Blocked by Source</title>
+      <chart>
+        <search>
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $src_tok$ by DNS.query
+| `drop_dm_object_name(DNS)`
+| sort 10 -count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
   <row>
     <panel>
       <table>
