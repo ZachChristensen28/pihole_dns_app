@@ -109,14 +109,16 @@
     <panel>
       <table>
         <search>
-          <query>| tstats `pihole_summariesonly` max(_time) as _time, values(DNS.dest) as "Forwarded Destination" values(DNS.message_type) as "Message Type", values(DNS.record_type) as "Query Type", values(DNS.answer) as Answer, values(DNS.reply_code) as "Reply Code" from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.query!="unknown" $host_tok$ by DNS.transaction_id, DNS.query, DNS.src
-| rename DNS.* as *
-| `pihole_enrich_hostname(src)`
-| eval Host=coalesce(Hostname,src)
-| rename query as Query, transaction_id as "Transaction_ID"
-| eval answer=if(answer=="0.0.0.0","Pi-Holed!",answer)
-| sort -_time
-| fields _time, Query, Host, "Forwarded Destination", "Message Type", "Query Type", Answer, "Reply Code", "Transaction_ID"</query>
+          <query>| tstats `pihole_summariesonly` max(_time) as Time, latest(DNS.dest) as dest, values(DNS.message_type) as "Message Type", values(DNS.record_type) as "Query Type", latest(DNS.answer) as Answer, latest(DNS.reply_code) as "Reply Code" from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.query!="unknown" $host_tok$ by DNS.transaction_id, DNS.query, DNS.src 
+| `drop_dm_object_name(DNS)` 
+| `pihole_enrich_hostname(src)` 
+| eval Source=coalesce(Hostname,src) 
+| eval Answer=if('Reply Code'=="Query Refused","Pi-Holed!",Answer) 
+| eval "Forwarded Destination"=if(dest=="unknown", "Not Forwarded", dest) 
+| sort - Time 
+| convert timeformat="%c" ctime(Time) 
+| rename query as Query, transaction_id as "Transaction_ID" 
+| fields Time, Query, Source, "Forwarded Destination", "Message Type", "Query Type", Answer, "Reply Code", "Transaction_ID"</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -131,6 +133,9 @@
         <format type="color" field="Query">
           <colorPalette type="sharedList"></colorPalette>
           <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color" field="Answer">
+          <colorPalette type="map">{"Pi-Holed!":#DC4E41}</colorPalette>
         </format>
         <drilldown>
           <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.Transaction_ID$</link>
