@@ -48,8 +48,8 @@
         <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
 | rename dest_nt_host as Hostname
 | fields  Hostname IP</query>
-        <earliest>$global_time_tok.earliest$</earliest>
-        <latest>$global_time_tok.latest$</latest>
+        <earliest>-7d@d</earliest>
+        <latest>now</latest>
       </search>
     </input>
     <input type="text" token="src" depends="$show_source_free$">
