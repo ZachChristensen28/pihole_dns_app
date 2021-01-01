@@ -29,7 +29,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $host_tok$ by DNS.query
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -46,7 +46,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by DNS.query
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -65,7 +65,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $host_tok$ by _time, DNS.src
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | `pihole_enrich_hostname(src)`
 | eval Host=coalesce(Hostname,src)
 | timechart useother=f count by Host</query>
@@ -89,7 +89,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by _time, DNS.src
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | `pihole_enrich_hostname(src)`
 | eval Host=coalesce(Hostname,src)
 | timechart useother=f count by Host</query>

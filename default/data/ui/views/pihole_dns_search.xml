@@ -148,6 +148,7 @@
 | `pihole_enrich_hostname(src)`
 | rename src as "Source IP", answer as Answer, query as Query, transaction_id as "Transaction_ID"
 | sort - Time
+| eval Answer=if('Reply Code'=="Query Refused","Pi-Holed!",Answer) 
 | eval Forwarded=if(Forwarded=="unknown","Not Forwarded",Forwarded), Time=strftime(Time, "%c")
 | fields Time, "Source IP", Hostname, Forwarded, "Message Type", "Record Type", Query, Answer, "Reply Code", "Transaction_ID", Count</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -161,6 +162,9 @@
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
+        <format type="color" field="Answer">
+          <colorPalette type="map">{"Pi-Holed!":#DC4E41}</colorPalette>
+        </format>
         <drilldown>
           <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.Transaction_ID$</link>
         </drilldown>
@@ -174,7 +178,7 @@
         <title>$src_disply_tok$</title>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
 | timechart span=1h sum(eval(if(message_type=="Query",'count',0))) as totalQueries, sum(eval(if(reply_code=="Query Refused", 'count',0))) as totalBlocked by series
@@ -224,7 +228,7 @@
       <map>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | iplocation answer
 | geostats globallimit=0 sum(count) by query</query>
           <earliest>$global_time_tok.earliest$</earliest>

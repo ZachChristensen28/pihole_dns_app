@@ -29,7 +29,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $host_tok$ by DNS.record_type
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | rename record_type as "Query Types"
 | chart count by "Query Types"</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -75,7 +75,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response $host_tok$ by DNS.reply_code
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | rename reply_code as "Responses"
 | chart count by "Responses"</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -126,7 +126,7 @@
       <table>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="Query Refused" $host_tok$ by DNS.query, DNS.reply_code
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | rename query as Query
 | stats sum(count) as Count, sum(eval(if(reply_code!="No Error", 'count', 0))) as Errors by Query
 | sort - Count</query>
@@ -151,7 +151,7 @@
       <table>
         <search>
           <query>| tstats `pihole_summariesonly` count as Count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by DNS.query
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | rename query as Query
 | sort - Count</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -171,7 +171,7 @@
       <chart>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" $host_tok$ by DNS.src
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | rename src as "Source IP", count as "# of Errors"</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>

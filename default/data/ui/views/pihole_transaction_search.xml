@@ -29,7 +29,7 @@
       <single>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ by DNS.src
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | fields src</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -42,7 +42,7 @@
       <single>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.query
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | fields query</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -56,7 +56,7 @@
       <single>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $txn_tok$ by DNS.record_type
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | fields record_type</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -85,7 +85,7 @@
       <single>
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response $txn_tok$ by DNS.reply_code
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | fields reply_code</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
@@ -117,7 +117,7 @@
       <viz type="force_directed_viz.force_directed">
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole $txn_tok$ DNS.answer!=unknown by DNS.src, DNS.query, DNS.answer
-| rename DNS.* as *
+| `drop_dm_object_name(DNS)`
 | eval answer=if(answer=="0.0.0.0", "Pi-holed!", answer)
 | rename src as node00, answer as node01, query as node02
 | eval node00="Source IP: ".node00, node01="Reply: ".node01, node02="Query: ".node02</query>
