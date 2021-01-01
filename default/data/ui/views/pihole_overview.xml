@@ -38,7 +38,7 @@
       </search>
     </input>
     <input type="dropdown" token="system_host_tok" searchWhenChanged="true" depends="$show_system$">
-      <label>System Host</label>
+      <label>Pi-hole (API)</label>
       <prefix>host="</prefix>
       <suffix>"</suffix>
       <fieldForLabel>host</fieldForLabel>
