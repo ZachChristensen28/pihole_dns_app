@@ -45,10 +45,14 @@
       <fieldForLabel>Hostname</fieldForLabel>
       <fieldForValue>IP</fieldForValue>
       <search>
-        <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as "IP" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host |  `drop_dm_object_name(All_Sessions)`
+        <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as new_ip from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host 
+| `drop_dm_object_name(All_Sessions)` 
+| inputlookup append=t pihole_dhcp_lease_lookup
+| stats values(new_ip) as new_ip, values(dest_ip) as lookup_ip by dest_nt_host
+| eval IP=coalesce(new_ip,lookup_ip)
 | rename dest_nt_host as Hostname
-| fields  Hostname IP</query>
-        <earliest>-7d@d</earliest>
+| fields Hostname, IP</query>
+        <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
     </input>
