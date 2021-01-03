@@ -20,8 +20,18 @@ App has a web UI | Yes. This App contains views.
 Version 2.1.6
 
 New
-- Added dropdown on DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
+- Added dropdown on the Pihole DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
 - Added ability to filter by Pi-hole in dashboards #17
+- Added macro to control summary indexes when utilizing tstats
+- Added Top Queries Allowed/Blocked by Source on the Pihole DNS search Dashboard
+
+Updated
+- Updated the Pihole DNS search dashboard table to reduce the amount of "unknown" values.
+- Updated the Pihole Query Log dashboard table to reduce the amount of "unknown" values. Also, updated field names for clarity.
+
+Fixed
+- Fixed Typos in token on the Pihole DNS search dashboard.
+- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel. 
 ```
 
 ## Requirements
@@ -54,12 +64,15 @@ Macro | Default | Description
 `pihole_system_index` | \`pihole_index\` | Update to the specific index being used for the "pihole:system" sourcetype, if different from the main pihole index.
 `pihole_dhcp_index` | \`pihole_index\` | Update to the specific index being used for the "pihole:dhcp" sourcetype, if different from the main pihole index.
 `pihole_dhcp_lease_retention` | 1209600 | Default retention time (in seconds) for DHCP hosts. Update as needed.
+`pihole_summariesonly` | summariesonly=false | Defaults to not using summarized data from the CIM. Set to "true" if using data model acceleration.
 
 ### Enable Data Model Acceleration
 
 Before enabling Data model acceleration, ensure your dns index has been included on the CIM add-on list of indexes. Navigate to Apps > Manage Apps. Find the App "Splunk Common Information Model" and click `set up` on the right side. Select the "Network Resolution" and ensure the index list contains the dns index being used.
 
 Enabling Data model acceleration will enable the searches to perform much more efficiently, however, it is not required. To do this, select Settings > Data Models. Then click "Edit" for the `Network Resolution (DNS)` data model > Click "Edit Acceleration". Then enable the data model acceleration.
+
+Update the `pihole_summariesonly` macro to be "true"
 
 ## Bugs/Feature Requests
 
