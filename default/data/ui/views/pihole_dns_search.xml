@@ -1,14 +1,31 @@
 <form theme="dark">
   <label>Pihole DNS Search</label>
   <fieldset submitButton="true">
-    <input type="time" token="gloabl_time_tok">
+    <input type="time" token="global_time_tok">
       <label></label>
       <default>
         <earliest>@d</earliest>
         <latest>now</latest>
       </default>
     </input>
-    <input type="text" token="src">
+    <input type="radio" token="source_selector">
+      <label>Select source</label>
+      <choice value="dhcp">Populate from DHCP</choice>
+      <choice value="free">Free text</choice>
+      <default>dhcp</default>
+      <initialValue>dhcp</initialValue>
+      <change>
+        <condition value="dhcp">
+          <set token="show_source_dhcp">true</set>
+          <unset token="show_source_free"></unset>
+        </condition>
+        <condition value="free">
+          <set token="show_source_free">true</set>
+          <unset token="show_source_dhcp"></unset>
+        </condition>
+      </change>
+    </input>
+    <input type="dropdown" token="src" depends="$show_source_dhcp$">
       <label>Source</label>
       <default></default>
       <change>
@@ -16,11 +33,44 @@
           <set token="src_disply_tok" submit="false">Source = $value$</set>
           <set token="src_tok" submit="false">(DNS.src=$value|s$)</set>
           <set token="src_raw_tok" submit="false">(src=$value|s$)</set>
+          <set token="show_src_row">true</set>
         </condition>
         <condition match="len($value$) == 0">
           <set token="src_disply_tok" submit="false">All Source IPs</set>
           <set token="src_tok" submit="false"></set>
           <set token="src_raw_tok" submit="false"></set>
+          <unset token="show_src_row"></unset>
+        </condition>
+      </change>
+      <fieldForLabel>Hostname</fieldForLabel>
+      <fieldForValue>IP</fieldForValue>
+      <search>
+        <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as new_ip from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host
+| `drop_dm_object_name(All_Sessions)`
+| inputlookup append=t pihole_dhcp_lease_lookup
+| stats values(new_ip) as new_ip, values(dest_ip) as lookup_ip by dest_nt_host
+| eval IP=coalesce(new_ip,lookup_ip)
+| rename dest_nt_host as Hostname
+| fields Hostname, IP</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="text" token="src" depends="$show_source_free$">
+      <label>Source</label>
+      <default></default>
+      <change>
+        <condition match="len($value$) &gt; 0">
+          <set token="src_disply_tok" submit="false">Source = $value$</set>
+          <set token="src_tok" submit="false">(DNS.src=$value|s$)</set>
+          <set token="src_raw_tok" submit="false">(src=$value|s$)</set>
+          <set token="show_src_row">true</set>
+        </condition>
+        <condition match="len($value$) == 0">
+          <set token="src_disply_tok" submit="false">All Source IPs</set>
+          <set token="src_tok" submit="false"></set>
+          <set token="src_raw_tok" submit="false"></set>
+          <unset token="show_src_row"></unset>
         </condition>
       </change>
     </input>
@@ -97,19 +147,54 @@
       </change>
     </input>
   </fieldset>
+  <row depends="$show_src_row$">
+    <panel>
+      <title>Top Queries Allowed by Source</title>
+      <chart>
+        <search>
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $src_tok$ by DNS.query
+| `drop_dm_object_name(DNS)`
+| sort 10 -count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Top Queries Blocked by Source</title>
+      <chart>
+        <search>
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $src_tok$ by DNS.query
+| `drop_dm_object_name(DNS)`
+| sort 10 -count</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
   <row>
     <panel>
       <table>
         <search>
-          <query>| tstats max(_time) as Time, values(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", values(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.src, DNS.query, DNS.answer, DNS.transaction_id
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` max(_time) as Time, latest(DNS.dest) as Forwarded, values(DNS.message_type) as "Message Type", latest(DNS.reply_code) as "Reply Code", values(DNS.record_type) as "Record Type", latest(DNS.answer) as answer, Count from datamodel=Network_Resolution.DNS where sourcetype=pihole * $src_tok$ $dest_tok$ $query_tok$ $message_type_tok$ $reply_code_tok$ by DNS.transaction_id, DNS.src, DNS.query
+| `drop_dm_object_name(DNS)`
 | `pihole_enrich_hostname(src)`
 | rename src as "Source IP", answer as Answer, query as Query, transaction_id as "Transaction_ID"
-| sort - Count
+| sort - Time
+| eval Answer=if('Reply Code'=="Query Refused","Pi-Holed!",Answer)
 | eval Forwarded=if(Forwarded=="unknown","Not Forwarded",Forwarded), Time=strftime(Time, "%c")
 | fields Time, "Source IP", Hostname, Forwarded, "Message Type", "Record Type", Query, Answer, "Reply Code", "Transaction_ID", Count</query>
-          <earliest>$gloabl_time_tok.earliest$</earliest>
-          <latest>$gloabl_time_tok.latest$</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">5</option>
@@ -119,6 +204,9 @@
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
+        <format type="color" field="Answer">
+          <colorPalette type="map">{"Pi-Holed!":#DC4E41}</colorPalette>
+        </format>
         <drilldown>
           <link target="_blank">/app/pihole_dns_app/pihole_transaction_search?form.txn=$row.Transaction_ID$</link>
         </drilldown>
@@ -131,8 +219,8 @@
       <chart>
         <title>$src_disply_tok$</title>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") $src_tok$ earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+| `drop_dm_object_name(DNS)`
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
 | timechart span=1h sum(eval(if(message_type=="Query",'count',0))) as totalQueries, sum(eval(if(reply_code=="Query Refused", 'count',0))) as totalBlocked by series
@@ -162,7 +250,7 @@
         <option name="charting.chart.overlayFields">"Queries Avg","Blocked Avg"</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.stackMode">stacked</option>
         <option name="charting.chart.style">shiny</option>
         <option name="charting.drilldown">none</option>
         <option name="charting.layout.splitSeries">0</option>
@@ -181,12 +269,12 @@
     <panel>
       <map>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" DNS.answer=0.0.0.0/0 DNS.answer!=0.0.0.0 $query_tok$ $src_tok$ by DNS.query, DNS.answer
+| `drop_dm_object_name(DNS)`
 | iplocation answer
 | geostats globallimit=0 sum(count) by query</query>
-          <earliest>$gloabl_time_tok.earliest$</earliest>
-          <latest>$gloabl_time_tok.latest$</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="drilldown">none</option>
         <option name="mapping.type">marker</option>
@@ -201,8 +289,8 @@
           <query>| from datamodel:"Network_Resolution"."DNS"
 | search sourcetype=pihole $src_raw_tok$ $dest_raw_tok$ $query_raw_tok$ $message_type_raw_tok$ $reply_code_raw_tok$
 | head 100</query>
-          <earliest>$gloabl_time_tok.earliest$</earliest>
-          <latest>$gloabl_time_tok.latest$</latest>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="list.drilldown">full</option>
         <drilldown>

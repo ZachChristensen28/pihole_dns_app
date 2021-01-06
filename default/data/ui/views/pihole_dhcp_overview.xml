@@ -1,13 +1,13 @@
-<form theme="dark" hideFilters="true">
+<form theme="dark">
   <label>Pihole DHCP Overview</label>
   <search id="base_search">
-    <query>| tstats latest(All_Sessions.dest_ip) as "IP Address", latest(All_Sessions.dest_mac) as "MAC Address" from datamodel=Network_Sessions where sourcetype=pihole:dhcp by All_Sessions.dest_nt_host</query>
+    <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as "IP Address", latest(All_Sessions.dest_mac) as "MAC Address" from datamodel=Network_Sessions where sourcetype=pihole:dhcp $host_tok$ by All_Sessions.dest_nt_host | `drop_dm_object_name(All_Sessions)`</query>
     <earliest>$global_time_tok.earliest$</earliest>
     <latest>$global_time_tok.latest$</latest>
     <sampleRatio>1</sampleRatio>
   </search>
   <search id="base_search_lease">
-    <query>`pihole_dhcp_index` sourcetype=pihole:dhcp range_start=* range_end=* lease_time=*
+    <query>`pihole_dhcp_index` sourcetype=pihole:dhcp range_start=* range_end=* lease_time=* $host_tok$
 | stats latest(lease_time) as lease_time, latest(range_start) as range_start, latest(range_end) as range_end</query>
     <earliest>$global_time_tok.earliest$</earliest>
     <latest>$global_time_tok.latest$</latest>
@@ -21,14 +21,27 @@
         <latest>now</latest>
       </default>
     </input>
+    <input type="dropdown" token="host_tok" searchWhenChanged="true">
+      <label>Pi-hole Server</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <prefix>host="</prefix>
+      <suffix>"</suffix>
+      <fieldForLabel>host</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search>
+        <query>| tstats count where `pihole_index` sourcetype=pihole by host</query>
+        <earliest>$global_time_tok.earliest$</earliest>
+        <latest>$global_time_tok.latest$</latest>
+      </search>
+    </input>
   </fieldset>
   <row>
     <panel>
       <title>DHCP Leases - Last 7 Days</title>
       <viz type="status_indicator_app.status_indicator">
         <search base="base_search">
-          <query>| `drop_dm_object_name(All_Sessions)`
-| stats dc(dest_nt_host) as user_count</query>
+          <query>| stats dc(dest_nt_host) as user_count</query>
         </search>
         <option name="drilldown">none</option>
         <option name="height">150</option>
@@ -51,8 +64,7 @@
       <title>Lease Duration</title>
       <viz type="status_indicator_app.status_indicator">
         <search base="base_search_lease">
-          <query>
-| stats values(lease_time) as lease_time
+          <query>| stats values(lease_time) as lease_time
 | eval icon="history"</query>
         </search>
         <option name="drilldown">none</option>
@@ -76,8 +88,7 @@
     <panel>
       <table>
         <search base="base_search">
-          <query>| `drop_dm_object_name(All_Sessions)`
-| rename dest_nt_host as Hostname
+          <query>| rename dest_nt_host as Hostname
 | streamstats count as "#"
 | fields "#" Hostname "IP Address" "MAC Address"</query>
         </search>

@@ -8,14 +8,28 @@
         <latest>now</latest>
       </default>
     </input>
+    <input type="dropdown" token="host_tok" searchWhenChanged="true">
+      <label>Pi-hole Server</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <prefix>host="</prefix>
+      <suffix>"</suffix>
+      <fieldForLabel>host</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search>
+        <query>| tstats count where `pihole_index` sourcetype=pihole by host</query>
+        <earliest>$global_time_tok.earliest$</earliest>
+        <latest>$global_time_tok.latest$</latest>
+      </search>
+    </input>
   </fieldset>
   <row>
     <panel>
       <title>Query Types</title>
       <chart>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query by DNS.record_type
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=query $host_tok$ by DNS.record_type
+| `drop_dm_object_name(DNS)`
 | rename record_type as "Query Types"
 | chart count by "Query Types"</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -60,8 +74,8 @@
       <title>Responses</title>
       <chart>
         <search>
-          <query>| tstats prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response by DNS.reply_code
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` prestats=t count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response $host_tok$ by DNS.reply_code
+| `drop_dm_object_name(DNS)`
 | rename reply_code as "Responses"
 | chart count by "Responses"</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -111,8 +125,8 @@
       <title>Top Queries</title>
       <table>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="Query Refused" by DNS.query, DNS.reply_code
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="Query Refused" $host_tok$ by DNS.query, DNS.reply_code
+| `drop_dm_object_name(DNS)`
 | rename query as Query
 | stats sum(count) as Count, sum(eval(if(reply_code!="No Error", 'count', 0))) as Errors by Query
 | sort - Count</query>
@@ -136,8 +150,8 @@
       <title>Top Blocked Queries</title>
       <table>
         <search>
-          <query>| tstats count as Count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" by DNS.query
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` count as Count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $host_tok$ by DNS.query
+| `drop_dm_object_name(DNS)`
 | rename query as Query
 | sort - Count</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -156,8 +170,8 @@
       <title>Client Errors</title>
       <chart>
         <search>
-          <query>| tstats count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" by DNS.src
-| rename DNS.* as *
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code!="No Error" DNS.reply_code!="Query Refused" $host_tok$ by DNS.src
+| `drop_dm_object_name(DNS)`
 | rename src as "Source IP", count as "# of Errors"</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
