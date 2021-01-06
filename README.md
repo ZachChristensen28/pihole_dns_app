@@ -4,7 +4,7 @@
 
 Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably because you are running your own super awesome Pi-hole® server. If not, check it out! https://pi-hole.net/
 
-This app was designed with efficiency in mind. It leverages the CIM accelerated data to quickly display the dashboards, no matter the size of your environment. This app works with the [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) add-on which provides the field extractions necessary for this app.  
+This app was designed with efficiency in mind. It leverages the CIM accelerated data to quickly display the dashboards, no matter the size of your environment. This app works with the [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) add-on which provides the field extractions necessary for this app.
 
 \*\***_NOTICE_**\*\*
 
@@ -13,7 +13,7 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [TA
 Info | Description
 ------|----------
 Version | 2.1.6 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole® v5.2](https://pi-hole.net/)
+Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.3.x](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
@@ -31,7 +31,7 @@ Updated
 
 Fixed
 - Fixed Typos in token on the Pihole DNS search dashboard.
-- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel. 
+- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel.
 ```
 
 ## Requirements
@@ -83,7 +83,7 @@ Please open an issue or submit a feature requests at [github.com](https://github
 ```TEXT
 Version 2.1.5
 New:
-- Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on. 
+- Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on.
 Fixed:
 - Updated DHCP enrichment macro to be simpler.
 
