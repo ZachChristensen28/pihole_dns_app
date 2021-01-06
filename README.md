@@ -12,26 +12,13 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [TA
 
 Info | Description
 ------|----------
-Version | 2.1.6 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.7 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.3.x](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.6
+Version 2.1.7
 
-New
-- Added dropdown on the Pihole DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
-- Added ability to filter by Pi-hole in dashboards #17
-- Added macro to control summary indexes when utilizing tstats
-- Added Top Queries Allowed/Blocked by Source on the Pihole DNS search Dashboard
-
-Updated
-- Updated the Pihole DNS search dashboard table to reduce the amount of "unknown" values.
-- Updated the Pihole Query Log dashboard table to reduce the amount of "unknown" values. Also, updated field names for clarity.
-
-Fixed
-- Fixed Typos in token on the Pihole DNS search dashboard.
-- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel.
 ```
 
 ## Requirements
@@ -81,6 +68,21 @@ Please open an issue or submit a feature requests at [github.com](https://github
 ## Versions
 
 ```TEXT
+Version 2.1.6
+New
+- Added dropdown on the Pihole DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
+- Added ability to filter by Pi-hole in dashboards #17
+- Added macro to control summary indexes when utilizing tstats
+- Added Top Queries Allowed/Blocked by Source on the Pihole DNS search Dashboard
+
+Updated
+- Updated the Pihole DNS search dashboard table to reduce the amount of "unknown" values.
+- Updated the Pihole Query Log dashboard table to reduce the amount of "unknown" values. Also, updated field names for clarity.
+
+Fixed
+- Fixed Typos in token on the Pihole DNS search dashboard.
+- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel.
+
 Version 2.1.5
 New:
 - Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on.
