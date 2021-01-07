@@ -63,7 +63,7 @@ Update the `pihole_summariesonly` macro to be "true"
 
 ## Bugs/Feature Requests
 
-Please open an issue or submit a feature requests at [github.com](https://github.com/ZachChristensen28/pihole_dns_app)
+Please open an issue or submit a feature requests at [github.com](https://github.com/ZachChristensen28/pihole_dns_app/issues)
 
 ## Versions
 
