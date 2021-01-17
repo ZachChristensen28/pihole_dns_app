@@ -5,7 +5,8 @@
   <view name="pihole_dhcp_overview" />
   <collection label="Pihole Search">
     <view name="pihole_dns_search" />
-  	<view name="pihole_transaction_search" />
+    <view name="pihole_transaction_search" />
   </collection>
+  <view name="pihole_blocklist_activity" />
   <view name="search" />
 </nav>
