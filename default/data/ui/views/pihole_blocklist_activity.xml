@@ -18,7 +18,7 @@
         <input type="time" token="time_tok" searchWhenChanged="true">
             <label></label>
             <default>
-                <earliest>-24h@h</earliest>
+                <earliest>-7d@h</earliest>
                 <latest>now</latest>
             </default>
         </input>
