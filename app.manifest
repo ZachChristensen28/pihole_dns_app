@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "TA-pihole_dns": {
-      "version": ">=1.2.7",
+      "version": ">=1.2.8",
       "optional": false
     },
     "Splunk_SA_CIM": {
