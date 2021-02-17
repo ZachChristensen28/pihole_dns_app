@@ -13,7 +13,7 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [Pi
 Info | Description
 ------|----------
 Version | 2.1.7 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.4.x](https://pi-hole.net/)
+Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.7](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
