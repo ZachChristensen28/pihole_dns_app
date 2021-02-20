@@ -21,6 +21,7 @@ Version 2.1.7
 
 New
 - Added ability to see which lists a blocked query belongs to. This requires version 1.2.8 or later of the Pihole DNS Add-on.
+- Added Default value on Pihole Overview dashboard for API host selection.
 ```
 
 ## Requirements
