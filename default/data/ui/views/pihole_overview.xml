@@ -15,6 +15,14 @@
       </condition>
     </progress>
   </search>
+  <search base="system_base">
+    <query>| fields host | head 1</query>
+    <progress>
+      <condition match="'job.resultCount' &gt; 0">
+        <set token="default_api_host">$result.host$</set>
+      </condition>
+    </progress>
+  </search>
   <fieldset submitButton="false">
     <input type="time" token="global_time_tok" searchWhenChanged="true">
       <label></label>
@@ -56,6 +64,8 @@
           <unset token="system_host_raw" />
         </condition>
       </change>
+      <choice value="$default_api_host$">default</choice>
+      <default>$default_api_host$</default>
     </input>
   </fieldset>
   <row>
@@ -265,10 +275,10 @@
       <title>Top 10 Sources</title>
       <table>
         <search>
-          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") by _time, DNS.src, DNS.message_type, DNS.reply_code span=30m 
-| `drop_dm_object_name(DNS)` 
-| stats sparkline(sum(eval(if(message_type=="Query",'count',0))), 30m) as Sparkline, sum(eval(if(message_type=="Query",'count',0))) as "# of Queries", sum(eval(if(reply_code=="Query Refused",'count',0))) as "# of Blocked Queries" by src 
-| eval "% Blocked"=round(('# of Blocked Queries'/'# of Queries')*100, 0) 
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole (DNS.message_type=query OR DNS.reply_code="Query Refused") by _time, DNS.src, DNS.message_type, DNS.reply_code span=30m
+| `drop_dm_object_name(DNS)`
+| stats sparkline(sum(eval(if(message_type=="Query",'count',0))), 30m) as Sparkline, sum(eval(if(message_type=="Query",'count',0))) as "# of Queries", sum(eval(if(reply_code=="Query Refused",'count',0))) as "# of Blocked Queries" by src
+| eval "% Blocked"=round(('# of Blocked Queries'/'# of Queries')*100, 0)
 | `pihole_enrich_hostname(src)`
 | rename src as "Source IP"
 | fields "Source IP", Hostname, Sparkline, "# of Queries", "# of Blocked Queries", "% Blocked"
