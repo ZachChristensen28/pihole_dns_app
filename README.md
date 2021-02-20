@@ -4,43 +4,34 @@
 
 Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably because you are running your own super awesome Pi-hole® server. If not, check it out! https://pi-hole.net/
 
-This app was designed with efficiency in mind. It leverages the CIM accelerated data to quickly display the dashboards, no matter the size of your environment. This app works with the [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) add-on which provides the field extractions necessary for this app.
+This app was designed with efficiency in mind. It leverages the CIM accelerated data to quickly display the dashboards, no matter the size of your environment. This app works with the [Pihole DNS Add-on](https://splunkbase.splunk.com/app/4506/) add-on which provides the field extractions necessary for this app.
 
 \*\***_NOTICE_**\*\*
 
-Pi-hole® v5 changed the way blocked queries are logged. Download the latest [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) to fix the issue in Splunk.
+Pi-hole® v5 changed the way blocked queries are logged. Download the latest [Pihole DNS Add-on](https://splunkbase.splunk.com/app/4506/) to fix the issue in Splunk.
 
 Info | Description
 ------|----------
-Version | 2.1.6 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.3.x](https://pi-hole.net/)
+Version | 2.1.7 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.7](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.6
+Version 2.1.7
 
 New
-- Added dropdown on the Pihole DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
-- Added ability to filter by Pi-hole in dashboards #17
-- Added macro to control summary indexes when utilizing tstats
-- Added Top Queries Allowed/Blocked by Source on the Pihole DNS search Dashboard
-
-Updated
-- Updated the Pihole DNS search dashboard table to reduce the amount of "unknown" values.
-- Updated the Pihole Query Log dashboard table to reduce the amount of "unknown" values. Also, updated field names for clarity.
-
-Fixed
-- Fixed Typos in token on the Pihole DNS search dashboard.
-- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel.
+- Added ability to see which lists a blocked query belongs to. This requires version 1.2.8 or later of the Pihole DNS Add-on.
+- Added Default value on Pihole Overview dashboard for API host selection.
 ```
 
 ## Requirements
 
 - Install [Splunk Common Information Model](https://splunkbase.splunk.com/app/1621/)
-- Install [TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) also located on [Splunkbase](https://splunkbase.splunk.com/app/4505/)
+- Install [Pihole DNS Add-on](https://github.com/ZachChristensen28/TA-pihole_dns) also located on [Splunkbase](https://splunkbase.splunk.com/app/4505/)
 - Install [Force Directed App for Splunk](https://splunkbase.splunk.com/app/3767/)
 - Install [Status Indicator - Custom Visualizatioin](https://splunkbase.splunk.com/app/3119/)
-- (If using DHCP) Enable the "DHCP Leases Lookup" Saved search ([See DHCP Requirement](#dhcp-requirement)).
+- (If using DHCP) Enable the "DHCP Leases Lookup" Saved search (see [DHCP Requirement](#dhcp-requirement)).
+- (Recommended) Enable Savedsearch `Pihole - Blocklist Lookup - Gen` to map blocked queries to their originating blocklists (see [Blocklist Mapping](#blocklist-mapping)).
 
 ## Setup
 
@@ -54,6 +45,16 @@ Pihole - Create DHCP Lease Lookup | Only needs to be run once. This will create 
 Pihole - DHCP Leases Lookup - Gen | Recurring search to keep DHCP leases up to date. | Runs Hourly
 Pihole - DHCP Remove Old Leases (Optional) | This search will remove leases that have not been updated for a period of time. The default is two weeks. | Once per day
 
+### Blocklist Mapping
+
+**Prerequisite:** The scripted input for the [Pihole DNS Add-on](https://github.com/ZachChristensen28/TA-pihole_dns) must be enabled on the universal forwarder where the Pi-hole server is located.
+
+Update the search macro `pihole_blocklist_index` to the appropriate value. Enable the Savedsearch and update the time of the schedule (if needed).
+
+Search Name | Description | Default Schedule
+----------- | ----------- | ----------------
+Pihole - Blocklist Lookup - Gen | Populates the `pihole_blocklist_lookup` file. | Once per day at 7:01 AM.
+
 ### Update Default Macros
 
 (Recommended) To ensure this App functions efficiently, it is important to update a few search macros. Change the following macros to their appropriate values:
@@ -64,6 +65,7 @@ Macro | Default | Description
 `pihole_system_index` | \`pihole_index\` | Update to the specific index being used for the "pihole:system" sourcetype, if different from the main pihole index.
 `pihole_dhcp_index` | \`pihole_index\` | Update to the specific index being used for the "pihole:dhcp" sourcetype, if different from the main pihole index.
 `pihole_dhcp_lease_retention` | 1209600 | Default retention time (in seconds) for DHCP hosts. Update as needed.
+`pihole_blocklist_index` | \`pihole_index\` | Update to the index set in the scripted input from the Pihole DNS Add-on.
 `pihole_summariesonly` | summariesonly=false | Defaults to not using summarized data from the CIM. Set to "true" if using data model acceleration.
 
 ### Enable Data Model Acceleration
@@ -76,11 +78,26 @@ Update the `pihole_summariesonly` macro to be "true"
 
 ## Bugs/Feature Requests
 
-Please open an issue or submit a feature requests at [github.com](https://github.com/ZachChristensen28/pihole_dns_app)
+Please open an issue or submit a feature requests at [github.com](https://github.com/ZachChristensen28/pihole_dns_app/issues)
 
 ## Versions
 
 ```TEXT
+Version 2.1.6
+New
+- Added dropdown on the Pihole DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
+- Added ability to filter by Pi-hole in dashboards #17
+- Added macro to control summary indexes when utilizing tstats
+- Added Top Queries Allowed/Blocked by Source on the Pihole DNS search Dashboard
+
+Updated
+- Updated the Pihole DNS search dashboard table to reduce the amount of "unknown" values.
+- Updated the Pihole Query Log dashboard table to reduce the amount of "unknown" values. Also, updated field names for clarity.
+
+Fixed
+- Fixed Typos in token on the Pihole DNS search dashboard.
+- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel.
+
 Version 2.1.5
 New:
 - Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on.

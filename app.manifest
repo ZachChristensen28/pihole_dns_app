@@ -5,7 +5,7 @@
     "id": {
       "group": null,
       "name": "pihole_dns_app",
-      "version": "2.1.6"
+      "version": "2.1.7"
     },
     "author": [
       {
@@ -40,26 +40,30 @@
   },
   "dependencies": {
     "TA-pihole_dns": {
-        "version": ">=1.2.7",
-        "optional": false
+      "version": ">=1.2.8",
+      "optional": false
     },
     "Splunk_SA_CIM": {
-        "version": ">=4.0.0",
-        "optional": true
+      "version": ">=4.0.0",
+      "optional": true
     },
     "force_directed_viz": {
-        "version": ">=3.0.0",
-        "optional": true
+      "version": ">=3.0.0",
+      "optional": true
     },
     "status_indicator_app": {
-        "version": ">=1.0.0",
-        "optional": true
+      "version": ">=1.0.0",
+      "optional": true
     }
   },
   "tasks": null,
   "inputGroups": null,
   "incompatibleApps": null,
   "platformRequirements": null,
-  "supportedDeployments": ["*"],
-  "targetWorkloads": ["_search_heads"]
+  "supportedDeployments": [
+    "*"
+  ],
+  "targetWorkloads": [
+    "_search_heads"
+  ]
 }
