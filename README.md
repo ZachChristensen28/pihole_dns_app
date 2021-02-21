@@ -17,6 +17,13 @@ Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.7](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
+Version 2.1.8
+
+Fix
+- Removed spaces from `pihole_summariesonly` search macro causing dashboards to have the error "Error in 'tstats' command: Option '=' is invalid." - #31
+
+------
+
 Version 2.1.7
 
 New
