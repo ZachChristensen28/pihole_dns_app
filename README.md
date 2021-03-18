@@ -12,23 +12,13 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [Pi
 
 Info | Description
 ------|----------
-Version | 2.1.8 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.1.9 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.7](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.8
+Version 2.1.9
 
-Fix
-- Removed spaces from `pihole_summariesonly` search macro causing dashboards to have the error "Error in 'tstats' command: Option '=' is invalid." - #31
-
-------
-
-Version 2.1.7
-
-New
-- Added ability to see which lists a blocked query belongs to. This requires version 1.2.8 or later of the Pihole DNS Add-on.
-- Added Default value on Pihole Overview dashboard for API host selection.
 ```
 
 ## Requirements
