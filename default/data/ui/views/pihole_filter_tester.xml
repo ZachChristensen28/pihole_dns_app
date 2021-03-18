@@ -1,0 +1,67 @@
+<form theme="dark">
+    <label>Filter Tester</label>
+    <description>Test you pihole filters before implementing them on the Pi-hole server.</description>
+    <fieldset submitButton="true" autoRun="false">
+        <input type="time" token="time_tok" searchWhenChanged="false">
+            <label></label>
+            <default>
+                <earliest>-24h@h</earliest>
+                <latest>now</latest>
+            </default>
+        </input>
+        <input type="link" token="filter_type" searchWhenChanged="false">
+            <label>Filter Type</label>
+            <choice value="regex">Regex</choice>
+            <choice value="exact">Exact</choice>
+            <initialValue>regex</initialValue>
+            <change>
+                <condition label="Regex">
+                    <set token="show_regex">true</set>
+                    <unset token="show_exact"></unset>
+                </condition>
+                <condition label="Exact">
+                    <set token="show_exact">true</set>
+                    <unset token="show_regex"></unset>
+                </condition>
+            </change>
+        </input>
+        <input type="text" token="filter_tok" searchWhenChanged="false">
+            <label>Filter</label>
+            <initialValue>.*</initialValue>
+        </input>
+    </fieldset>
+    <row>
+        <panel depends="$show_regex$">
+            <table>
+                <search>
+                    <query>`pihole_index` query=*
+| where match(query, "$filter_tok$")
+| stats count by query
+| sort -count
+| head 100</query>
+                    <earliest>$time_tok.earliest$</earliest>
+                    <latest>$time_tok.latest$</latest>
+                    <sampleRatio>1</sampleRatio>
+                </search>
+                <option name="drilldown">none</option>
+                <option name="refresh.display">progressbar</option>
+            </table>
+        </panel>
+        <panel depends="$show_exact$">
+            <table>
+                <search>
+                    <query>`pihole_index` query=*
+| search query=$filter_tok$
+| stats count by query
+| sort -count
+| head 100</query>
+                    <earliest>$time_tok.earliest$</earliest>
+                    <latest>$time_tok.latest$</latest>
+                    <sampleRatio>1</sampleRatio>
+                </search>
+                <option name="drilldown">none</option>
+                <option name="refresh.display">progressbar</option>
+            </table>
+        </panel>
+    </row>
+</form>

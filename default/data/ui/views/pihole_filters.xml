@@ -1,0 +1,168 @@
+<form theme="dark">
+    <label>Pihole Filters</label>
+    <description>Displays regex and exact filters created in the Pi-hole server</description>
+    <search id="base">
+        <query>`pihole_filter_index` sourcetype=pihole:filters filter_type=*
+| eval date_added=strftime(date_added, "%F"), date_modified=strftime(date_modified, "%F")
+| stats latest(domain) as filter, latest(comment) as comment, latest(enabled) as enabled, latest(date_added) as date_added, latest(date_modified) as date_modified by id, host, filter_type</query>
+        <earliest>$time_tok.earliest$</earliest>
+        <latest>$time_tok.latest$</latest>
+        <sampleRatio>1</sampleRatio>
+    </search>
+    <fieldset submitButton="false">
+        <input type="time" token="time_tok" searchWhenChanged="true">
+            <label></label>
+            <default>
+                <earliest>@d</earliest>
+                <latest>now</latest>
+            </default>
+        </input>
+        <input type="multiselect" token="host_tok" searchWhenChanged="true">
+            <label>Host</label>
+            <delimiter>,</delimiter>
+            <choice value="*">All</choice>
+            <prefix>host IN(</prefix>
+            <suffix>)</suffix>
+            <initialValue>*</initialValue>
+            <valuePrefix>"</valuePrefix>
+            <valueSuffix>"</valueSuffix>
+            <fieldForLabel>host</fieldForLabel>
+            <fieldForValue>host</fieldForValue>
+            <search base="base">
+                <query>| stats count by host</query>
+            </search>
+        </input>
+        <input type="dropdown" token="filter_tok" searchWhenChanged="true">
+            <label>Filter Type</label>
+            <choice value="*">All</choice>
+            <choice value="regex_white">Regex Allow</choice>
+            <choice value="regex_black">Regex Block</choice>
+            <choice value="white">Exact Allow</choice>
+            <choice value="black">Exact Block</choice>
+            <prefix>filter_type="</prefix>
+            <suffix>"</suffix>
+            <initialValue>*</initialValue>
+            <change>
+                <condition label="All">
+                    <set token="table_fields">["host", "filter"]</set>
+                    <set token="show_regex_allow_filter">true</set>
+                    <set token="show_regex_block_filter">true</set>
+                    <set token="show_allow_filter">true</set>
+                    <set token="show_block_filter">true</set>
+                    <unset token="help_text"></unset>
+                </condition>
+                <condition label="Regex Allow">
+                    <set token="table_fields">["host", "filter", "comment", "date_added", "date_modified", "enabled"]</set>
+                    <set token="show_regex_allow_filter">true</set>
+                    <unset token="show_regex_block_filter"></unset>
+                    <unset token="show_allow_filter"></unset>
+                    <unset token="show_block_filter"></unset>
+                    <unset token="help_text"></unset>
+                </condition>
+                <condition label="Regex Block">
+                    <set token="table_fields">["host", "filter", "comment", "date_added", "date_modified", "enabled"]</set>
+                    <set token="show_regex_block_filter">true</set>
+                    <unset token="show_regex_allow_filter"></unset>
+                    <unset token="show_allow_filter"></unset>
+                    <unset token="show_block_filter"></unset>
+                    <unset token="help_text"></unset>
+                </condition>
+                <condition label="Exact Allow">
+                    <set token="table_fields">["host", "filter", "comment", "date_added", "date_modified", "enabled"]</set>
+                    <set token="show_allow_filter">true</set>
+                    <unset token="show_regex_allow_filter"></unset>
+                    <unset token="show_regex_block_filter"></unset>
+                    <unset token="show_block_filter"></unset>
+                    <unset token="help_text"></unset>
+                </condition>
+                <condition label="Exact Block">
+                    <set token="table_fields">["host", "filter", "comment", "date_added", "date_modified", "enabled"]</set>
+                    <set token="show_block_filter">true</set>
+                    <unset token="show_regex_allow_filter"></unset>
+                    <unset token="show_regex_block_filter"></unset>
+                    <unset token="show_allow_filter"></unset>
+                    <unset token="help_text"></unset>
+                </condition>
+                <condition>
+                    <set token="help_text">true</set>
+                    <set token="table_fields">["host", "filter"]</set>
+                    <unset token="show_allow_filter"></unset>
+                    <unset token="show_regex_allow_filter"></unset>
+                    <unset token="show_regex_block_filter"></unset>
+                    <unset token="show_block_filter"></unset>
+                </condition>
+            </change>
+        </input>
+    </fieldset>
+    <row>
+        <panel depends="$help_text$">
+            <html>
+                <h1 style="text-align:center">Please select a filter option.</h1>
+            </html>
+        </panel>
+        <panel depends="$show_regex_allow_filter$">
+            <title>Regex Allow</title>
+            <table>
+                <search base="base">
+                    <query>search filter_type="regex_white" $host_tok$</query>
+                </search>
+                <option name="count">10</option>
+                <option name="dataOverlayMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <fields>$table_fields$</fields>
+            </table>
+        </panel>
+        <panel depends="$show_allow_filter$">
+            <title>Exact Allow</title>
+            <table>
+                <search base="base">
+                    <query>search filter_type="white" $host_tok$</query>
+                </search>
+                <option name="count">10</option>
+                <option name="dataOverlayMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <fields>$table_fields$</fields>
+            </table>
+        </panel>
+        <panel depends="$show_regex_block_filter$">
+            <title>Regex Block</title>
+            <table>
+                <search base="base">
+                    <query>search filter_type="regex_black" $host_tok$</query>
+                </search>
+                <option name="count">10</option>
+                <option name="dataOverlayMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <fields>$table_fields$</fields>
+            </table>
+        </panel>
+        <panel depends="$show_block_filter$">
+            <title>Exact Block</title>
+            <table>
+                <search base="base">
+                    <query>search filter_type="black" $host_tok$</query>
+                </search>
+                <option name="count">10</option>
+                <option name="dataOverlayMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <fields>$table_fields$</fields>
+            </table>
+        </panel>
+    </row>
+</form>
