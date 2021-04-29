@@ -12,17 +12,13 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [Pi
 
 Info | Description
 ------|----------
-Version | 2.1.9 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.3.0 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.9
+Version 2.3.0
 
-New
-- Macro added for filter index.
-- Created new view "Pihole Filters." This dashboard displays the regex and exact filters created in the Pi-hole server. This requires modular inputs to be setup on the Pihole DNS add-on.
-- Created new view "Filter Tester." This dashboard will help test regex and exact filters before you implement them on the Pi-hole.
 ```
 
 ## Requirements
