@@ -12,23 +12,17 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [Pi
 
 Info | Description
 ------|----------
-Version | 2.1.8 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole® v5.2.x, FTL 5.7](https://pi-hole.net/)
+Version | 2.1.9 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.1.8
-
-Fix
-- Removed spaces from `pihole_summariesonly` search macro causing dashboards to have the error "Error in 'tstats' command: Option '=' is invalid." - #31
-
-------
-
-Version 2.1.7
+Version 2.1.9
 
 New
-- Added ability to see which lists a blocked query belongs to. This requires version 1.2.8 or later of the Pihole DNS Add-on.
-- Added Default value on Pihole Overview dashboard for API host selection.
+- Macro added for filter index.
+- Created new view "Pihole Filters." This dashboard displays the regex and exact filters created in the Pi-hole server. This requires modular inputs to be setup on the Pihole DNS add-on.
+- Created new view "Filter Tester." This dashboard will help test regex and exact filters before you implement them on the Pi-hole.
 ```
 
 ## Requirements
@@ -39,6 +33,7 @@ New
 - Install [Status Indicator - Custom Visualizatioin](https://splunkbase.splunk.com/app/3119/)
 - (If using DHCP) Enable the "DHCP Leases Lookup" Saved search (see [DHCP Requirement](#dhcp-requirement)).
 - (Recommended) Enable Savedsearch `Pihole - Blocklist Lookup - Gen` to map blocked queries to their originating blocklists (see [Blocklist Mapping](#blocklist-mapping)).
+- (Recommended) Setup modular inputs on the Pihole DNS Add-on. See the [Modular Input Setup](https://github.com/ZachChristensen28/TA-pihole_dns/wiki/Modular-Input-Setup) wiki for more information.
 
 ## Setup
 
@@ -74,6 +69,7 @@ Macro | Default | Description
 `pihole_dhcp_lease_retention` | 1209600 | Default retention time (in seconds) for DHCP hosts. Update as needed.
 `pihole_blocklist_index` | \`pihole_index\` | Update to the index set in the scripted input from the Pihole DNS Add-on.
 `pihole_summariesonly` | summariesonly=false | Defaults to not using summarized data from the CIM. Set to "true" if using data model acceleration.
+`pihole_filter_index` | \`pihole_index\` | Update to the specific index being used for the pihole:filters sourcetype created from the filters modular input.
 
 ### Enable Data Model Acceleration
 
@@ -86,49 +82,3 @@ Update the `pihole_summariesonly` macro to be "true"
 ## Bugs/Feature Requests
 
 Please open an issue or submit a feature requests at [github.com](https://github.com/ZachChristensen28/pihole_dns_app/issues)
-
-## Versions
-
-```TEXT
-Version 2.1.6
-New
-- Added dropdown on the Pihole DNS search dashboard populated by DHCP entries #18 (@mljdivemaster)
-- Added ability to filter by Pi-hole in dashboards #17
-- Added macro to control summary indexes when utilizing tstats
-- Added Top Queries Allowed/Blocked by Source on the Pihole DNS search Dashboard
-
-Updated
-- Updated the Pihole DNS search dashboard table to reduce the amount of "unknown" values.
-- Updated the Pihole Query Log dashboard table to reduce the amount of "unknown" values. Also, updated field names for clarity.
-
-Fixed
-- Fixed Typos in token on the Pihole DNS search dashboard.
-- Fixed search on the Pihole Transaction dashboard which prevented no information to display on the force directed panel.
-
-Version 2.1.5
-New:
-- Updated Pihole Overview dashboard to include data from the modular input of the TA-pihole_dns add-on.
-Fixed:
-- Updated DHCP enrichment macro to be simpler.
-
-Version 2.1.4
-Fixed
-- Fixed incomplete eval statement on Query log dashboard causing the "Host" field to be missing.
-- Fixed missing "Transaction ID" field on Query log dashbaord
-
-Version 2.1.3
-- Added DHCP Overview Dashboard.
-- If DHCP is being used, IP address will be enriched with hostnames.
-- Added select enhancements to dashboards.
-
-* New requirement added for Status Indicator - Custom Visualization.
-* New requirement for populating DHCP hostnames (if DHCP is being used).
-
-Note: Download the latest Pihole add-on for the new dashboards to work (see Requirements).
-Version 2.1.2
-- Fixed Broken Drilldown on DNS Search Page.
-
-Version 2.1.1
-- Updated README
-- Updated visualizations to no longer required Data models to be accelerated to function.
-```
