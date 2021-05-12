@@ -22,7 +22,7 @@ New
 
 ## Documentation
 
-Full documentation can be found at http://splunk-pihole-app-documentation.rtfd.io/
+Full documentation can be found at https://splunk-pihole-app-documentation.rtfd.io/
 
 ## Bugs/Feature Requests
 
