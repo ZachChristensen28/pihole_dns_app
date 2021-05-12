@@ -12,12 +12,15 @@ Pi-hole® v5 changed the way blocked queries are logged. Download the latest [Pi
 
 Info | Description
 ------|----------
-Version | 2.3.0 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.2.0 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 App has a web UI | Yes. This App contains views.
 
 ```TEXT
-Version 2.3.0
+Version 2.2.0
+
+- Made DHCP lookup simplier
+- Fixed issue causing DNS search dashboard to not populate from a custom lookup -> #35
 
 ```
 
