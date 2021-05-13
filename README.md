@@ -15,7 +15,6 @@ Version 2.2.0
 
 - Made DHCP lookup simplier
 - Fixed issue causing DNS search dashboard to not populate from a custom lookup -> #35
-
 ```
 
 ## Documentation
