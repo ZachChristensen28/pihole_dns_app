@@ -7,14 +7,12 @@ Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably be
 
 Info | Description
 ------|----------
-Version | 2.2.0 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.2.1 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 
 ```TEXT
-Version 2.2.0
+Version 2.2.1
 
-- Made DHCP lookup simplier
-- Fixed issue causing DNS search dashboard to not populate from a custom lookup -> #35
 ```
 
 ## Documentation
