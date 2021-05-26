@@ -19,7 +19,7 @@
     "classification": {
       "intendedAudience": null,
       "categories": [],
-      "developmentStatus": null
+      "developmentStatus": "Production/Stable"
     },
     "commonInformationModels": null,
     "license": {
@@ -33,9 +33,9 @@
       "uri": null
     },
     "releaseNotes": {
-      "name": null,
+      "name": README,
       "text": "./README.md",
-      "uri": null
+      "uri": "https://splunk-pihole-app-documentation.rtfd.io/
     }
   },
   "dependencies": {
@@ -45,7 +45,7 @@
     },
     "Splunk_SA_CIM": {
       "version": ">=4.0.0",
-      "optional": true
+      "optional": false
     },
     "force_directed_viz": {
       "version": ">=3.0.0",
