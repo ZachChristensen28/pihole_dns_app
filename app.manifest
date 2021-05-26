@@ -33,7 +33,7 @@
       "uri": null
     },
     "releaseNotes": {
-      "name": README,
+      "name": "README",
       "text": "./README.md",
       "uri": "https://splunk-pihole-app-documentation.rtfd.io/"
     }
@@ -60,6 +60,10 @@
   "inputGroups": null,
   "incompatibleApps": null,
   "platformRequirements": null,
-  "supportedDeployments": ["*"],
-  "targetWorkloads": ["_search_heads"]
+  "supportedDeployments": [
+    "*"
+  ],
+  "targetWorkloads": [
+    "_search_heads"
+  ]
 }
