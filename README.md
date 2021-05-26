@@ -13,6 +13,7 @@ Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 ```TEXT
 Version 2.2.1
 
+- fixed error in stats command error on Splunk version 8.2.0 - #38
 ```
 
 ## Documentation
