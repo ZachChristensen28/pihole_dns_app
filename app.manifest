@@ -35,7 +35,7 @@
     "releaseNotes": {
       "name": README,
       "text": "./README.md",
-      "uri": "https://splunk-pihole-app-documentation.rtfd.io/
+      "uri": "https://splunk-pihole-app-documentation.rtfd.io/"
     }
   },
   "dependencies": {
@@ -60,10 +60,6 @@
   "inputGroups": null,
   "incompatibleApps": null,
   "platformRequirements": null,
-  "supportedDeployments": [
-    "*"
-  ],
-  "targetWorkloads": [
-    "_search_heads"
-  ]
+  "supportedDeployments": ["*"],
+  "targetWorkloads": ["_search_heads"]
 }
