@@ -1,4 +1,4 @@
-<form theme="dark">
+<form theme="dark" version="1.1">
   <label>Pihole Overview</label>
   <search id="system_base">
     <query>`pihole_system_index` sourcetype=pihole:system
