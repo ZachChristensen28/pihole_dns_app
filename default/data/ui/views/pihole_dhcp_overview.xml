@@ -1,6 +1,6 @@
-<form theme="dark">
+<form theme="dark" version="1.1">
   <label>Pihole DHCP Overview</label>
-  <search id="base_search">
+  <search id="base_search" version="1.1">
     <query>| tstats `pihole_summariesonly` latest(All_Sessions.dest_ip) as "IP Address", latest(All_Sessions.dest_mac) as "MAC Address" from datamodel=Network_Sessions where sourcetype=pihole:dhcp $host_tok$ by All_Sessions.dest_nt_host | `drop_dm_object_name(All_Sessions)`</query>
     <earliest>$global_time_tok.earliest$</earliest>
     <latest>$global_time_tok.latest$</latest>
