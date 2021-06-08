@@ -7,14 +7,12 @@ Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably be
 
 Info | Description
 ------|----------
-Version | 2.2.1 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.2.2 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 
 ```TEXT
-Version 2.2.1
+Version 2.2.2
 
-- fixed error in stats command error on Splunk version 8.2.0 - #38
-- added version to dashboards to support jQuery v3.5.
 ```
 
 ## Documentation
