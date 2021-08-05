@@ -15,6 +15,9 @@ Version 2.2.1
 
 - fixed error in stats command error on Splunk version 8.2.0 - #38
 - added version to dashboards to support jQuery v3.5.
+- adding new macro (pihole_modinput_index) for modular inputs indexes.
+- New Dashboards:
+    - Data Overview - Displays license utilization stats
 ```
 
 ## Documentation
