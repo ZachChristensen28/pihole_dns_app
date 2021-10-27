@@ -75,7 +75,7 @@
         <search>
           <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=-1d@d latest=-24h
 | append
-    [ tstats count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=@d latest=now]
+    [ tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=@d latest=now]
 | appendcols
     [ makeresults
     | eval time=now()]
