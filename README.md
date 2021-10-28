@@ -17,7 +17,9 @@ Version 2.2.1
 - added version to dashboards to support jQuery v3.5.
 - adding new macro (pihole_modinput_index) for modular inputs indexes.
 - New Dashboards:
-    - Data Overview - Displays license utilization stats
+    - Data Overview - Displays license utilization stats.
+- Updated Blocklist Activity Dasboard to use new data from modular inputs.
+- Added new lookup: pihole_groups_lookup
 ```
 
 ## Documentation
