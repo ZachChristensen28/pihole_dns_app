@@ -1,8 +1,8 @@
 <form theme="dark" version="1.1">
   <label>Pihole Overview</label>
   <search id="system_base">
-    <query>`pihole_system_index` sourcetype=pihole:system
-| stats latest(domains_on_blocklist) as domains_on_blocklist, latest(gravity_updated) as gravity_updated by host</query>
+    <query>`pihole_system_index` sourcetype=pihole:sysinfo
+| chart latest(ftl.database.gravity) as domains_on_blocklist by host</query>
     <earliest>$global_time_tok.earliest$</earliest>
     <latest>$global_time_tok.latest$</latest>
     <sampleRatio>1</sampleRatio>
@@ -44,28 +44,6 @@
         <earliest>$global_time_tok.earliest$</earliest>
         <latest>$global_time_tok.latest$</latest>
       </search>
-    </input>
-    <input type="dropdown" token="system_host_tok" searchWhenChanged="true" depends="$show_system$">
-      <label>Pi-hole (API)</label>
-      <prefix>host="</prefix>
-      <suffix>"</suffix>
-      <fieldForLabel>host</fieldForLabel>
-      <fieldForValue>host</fieldForValue>
-      <search>
-        <query>| tstats count where `pihole_system_index` sourcetype=pihole:system by host</query>
-        <earliest>$global_time_tok.earliest$</earliest>
-        <latest>$global_time_tok.latest$</latest>
-      </search>
-      <change>
-        <condition match="len($value$) &gt; 0">
-          <set token="system_host_raw">$value$</set>
-        </condition>
-        <condition>
-          <unset token="system_host_raw" />
-        </condition>
-      </change>
-      <choice value="$default_api_host$">default</choice>
-      <default>$default_api_host$</default>
     </input>
   </fieldset>
   <row>
@@ -121,16 +99,16 @@
           <latest>now</latest>
         </search>
         <option name="colorMode">block</option>
-        <option name="rangeColors">["0xdc4e41","0xdc4e41"]</option>
-        <option name="useColors">1</option>
+        <option name="drilldown">none</option>
         <option name="height">150</option>
+        <option name="rangeColors">["0xdc4e41","0xdc4e41"]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">0</option>
         <option name="trendDisplayMode">absolute</option>
         <option name="underLabel">% Queries Blocked vs Yesterday</option>
         <option name="unit">%</option>
+        <option name="useColors">1</option>
         <option name="useThousandSeparators">0</option>
-        <option name="drilldown">none</option>
       </single>
     </panel>
     <panel>
@@ -153,48 +131,26 @@
       </single>
     </panel>
     <panel depends="$show_system$">
-      <title>Domains on Blocklist</title>
-      <single>
-        <title>($system_host_raw$)</title>
+      <title>Domains on Blocklist by Host</title>
+      <chart>
         <search base="system_base">
-          <query>| search $system_host_tok$
-| fields domains_on_blocklist</query>
+          <query></query>
         </search>
-        <option name="colorBy">value</option>
-        <option name="colorMode">block</option>
-        <option name="drilldown">none</option>
-        <option name="numberPrecision">0</option>
-        <option name="rangeColors">["0xf8be34","0xf8be34"]</option>
-        <option name="rangeValues">[0]</option>
-        <option name="showSparkline">1</option>
-        <option name="showTrendIndicator">1</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="height">172</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
-        <option name="trendColorInterpretation">standard</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="underLabel">Domains on Blocklist</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
-        <option name="useThousandSeparators">1</option>
-      </single>
-    </panel>
-    <panel depends="$show_system$">
-      <title>Gravity List Last Update</title>
-      <single>
-        <title>($system_host_raw$)</title>
-        <search base="system_base">
-          <query>| search $system_host_tok$
-|fields gravity_updated
-| convert timeformat="%b %d" ctime(gravity_updated)</query>
-        </search>
-        <option name="colorMode">block</option>
-        <option name="drilldown">none</option>
-        <option name="rangeColors">["0x53a051","0x53a051"]</option>
-        <option name="rangeValues">[0]</option>
-        <option name="underLabel">Last Updated</option>
-        <option name="useColors">0</option>
-      </single>
+        <option name="charting.seriesColors">["0xf8be34","0xf8be34"]</option>
+      </chart>
     </panel>
   </row>
   <row>
