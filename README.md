@@ -13,6 +13,7 @@ Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
 ```TEXT
 Version 2.2.2
 
+- Updated search dasboard to allow filtering of pie charts based of query input
 ```
 
 ## Documentation

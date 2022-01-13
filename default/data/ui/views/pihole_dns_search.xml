@@ -153,7 +153,7 @@
       <title>Top Queries Allowed by Source</title>
       <chart>
         <search>
-          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $src_tok$ by DNS.query
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="No Error" $src_tok$ $query_tok$ by DNS.query
 | `drop_dm_object_name(DNS)`
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
@@ -169,7 +169,7 @@
       <title>Top Queries Blocked by Source</title>
       <chart>
         <search>
-          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $src_tok$ by DNS.query
+          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where sourcetype=pihole DNS.message_type=response DNS.reply_code="Query Refused" $src_tok$ $query_tok$ by DNS.query
 | `drop_dm_object_name(DNS)`
 | sort 10 -count</query>
           <earliest>$global_time_tok.earliest$</earliest>
