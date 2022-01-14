@@ -1,5 +1,19 @@
 <form theme="dark" version="1.1">
   <label>Pihole Transaction Search</label>
+  <search id="cnameBase">
+    <query>`pihole_index` sourcetype=pihole $txn_raw_tok$ | search answer="blocked during CNAME inspection" | rex "reply (?&lt;msg&gt;[^%]+)"
+| table msg</query>
+    <earliest>$global_time_tok.earliest$</earliest>
+    <latest>$global_time_tok.latest$</latest>
+    <done>
+      <condition match="'job.resultCount'&gt;0">
+        <set token="showCname">true</set>
+      </condition>
+      <condition>
+        <unset token="showCname"></unset>
+      </condition>
+    </done>
+  </search>
   <fieldset submitButton="true">
     <input type="time" token="global_time_tok">
       <label></label>
@@ -112,6 +126,29 @@
       </single>
     </panel>
   </row>
+  <row depends="$showCname$">
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="cnameBase">
+          <query />
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">65</option>
+        <option name="status_indicator_app.status_indicator.colorBy">static_color</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">background</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">info-circle</option>
+        <option name="status_indicator_app.status_indicator.icon">fix_icon</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#dc4e41</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
   <row>
     <panel>
       <viz type="force_directed_viz.force_directed">
@@ -167,12 +204,12 @@
       <title>DNS Transaction</title>
       <event>
         <search>
-          <query>`pihole_index` sourcetype=pihole $txn_raw_tok$
-| transaction transaction_id</query>
+          <query>`pihole_index` sourcetype=pihole $txn_raw_tok$ | transaction transaction_id</query>
           <earliest>$global_time_tok.earliest$</earliest>
           <latest>$global_time_tok.latest$</latest>
         </search>
         <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
       </event>
     </panel>
   </row>
