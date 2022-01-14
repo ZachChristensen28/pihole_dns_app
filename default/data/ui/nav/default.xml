@@ -11,6 +11,5 @@
     <view name="pihole_filters" />
     <view name="pihole_filter_tester" />
   </collection>
-  <view name="pihole_blocklist_activity" />
   <view name="search" />
 </nav>
