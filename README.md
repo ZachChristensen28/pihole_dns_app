@@ -8,12 +8,13 @@ Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably be
 Info | Description
 ------|----------
 Version | 2.2.2 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
-Vendor Product Version | [Pi-hole® v5.3.x, FTL 5.8.x](https://pi-hole.net/)
+Vendor Product Version | [Pi-hole® v5.x, FTL 5.x](https://pi-hole.net/)
 
 ```TEXT
 Version 2.2.2
 
-- Updated search dasboard to allow filtering of pie charts based of query input
+- Updated search dasboard to allow filtering of pie charts based of query input.
+- Deprecating all knowledge objects for blocklist activity. This feature will be brought back with v6 of Pi-hole.
 ```
 
 ## Documentation
