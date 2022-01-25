@@ -220,7 +220,7 @@
       </input>
       <chart>
         <search>
-          <query>| tstats `pihole_summariesonly` count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=-30d@d latest=now by _time, DNS.message_type, DNS.reply_code span=1h
+          <query>| tstats `pihole_summariesonly` count(DNS.transaction_id) as count from datamodel=Network_Resolution.DNS where $host_tok$ sourcetype=pihole DNS.message_type=query earliest=-30d@d latest=now by _time span=1h
 | `drop_dm_object_name(DNS)`
 | eval startTime=relative_time(now(), "@d")
 | eval series=if(_time&gt;=startTime, "today","prior")
