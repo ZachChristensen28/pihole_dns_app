@@ -1,7 +1,7 @@
 # Pihole DNS app for Splunk
 
 ![GitHub](https://img.shields.io/github/license/zachchristensen28/pihole_dns_app)
-[![Documentation Status](https://readthedocs.org/projects/splunk-pihole-app-documentation/badge/?version=latest)](https://splunk-pihole-app-documentation.readthedocs.io/en/latest/?badge=latest)
+[![docs](https://github.com/ZachChristensen28/splunk-pihole-app-documentation/actions/workflows/ci.yml/badge.svg)](https://splunk-pihole.ztsplunker.com/)
 
 Visualize your Pi-hole in Splunk! If you've landed on this app, it's probably because you are running your own super awesome Pi-hole® server. If not, check it out! https://pi-hole.net/
 
@@ -21,7 +21,7 @@ Version 2.2.2
 
 ## Documentation
 
-Full documentation can be found at https://splunk-pihole-app-documentation.rtfd.io/
+Full documentation can be found at https://splunk-pihole.ztsplunker.com/
 
 ## Bugs/Feature Requests
 
