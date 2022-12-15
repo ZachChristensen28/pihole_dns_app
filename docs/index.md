@@ -13,11 +13,11 @@ hide:
 
 ![Pi-hole Add-on for Splunk](/images/splunkbase-ta-pihole.png){ align=left width=200 }
 
-- Complete [logging requirements](https://splunk-pihole.ztsplunker.com/getting-started/pihole-logging-requirements/){ target="_blank" }
+- Complete [logging requirements](https://splunk-pihole-ta.ztsplunker.com/getting-started/pihole-logging-requirements/){ target="_blank" }
 - Install on Indexers, Search Heads
 - Configure inputs on Forwarders
 
-[See Documentation :material-file-document-check:](https://splunk-pihole.ztsplunker.com/landing-page/ "See Documentation"){ .md-button .md-button--primary target="_blank" }
+[See Documentation :material-file-document-check:](https://splunk-pihole-ta.ztsplunker.com/landing-page/ "See Documentation"){ .md-button .md-button--primary target="_blank" }
 [View on Splunkbase](https://splunkbase.splunk.com/app/4505/ "View on Splunkbase"){ .md-button .md-button--primary target="_blank" }
 
 </div>
