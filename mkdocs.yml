@@ -1,0 +1,91 @@
+site_name: Pi-hole App for Splunk Documentation
+edit_uri: ""
+repo_url: https://github.com/ZachChristensen28/pihole_dns_app
+repo_name: ZachChristensen28/pihole_dns_app
+
+plugins:
+  - git-revision-date-localized:
+      type: date
+      fallback_to_build_date: true
+  - search
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - attr_list
+  - meta
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - abbr
+  - pymdownx.snippets
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+theme:
+  name: material
+  logo: images/ph_app_logo.png
+  favicon: images/ph_app_logo.png
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    # - header.autohide
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    # - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    - content.code.annotate
+    # - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: red
+      accent: red
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/zachary-christensen28/
+    - icon: fontawesome/brands/github
+      link: https://github.com/ZachChristensen28
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/ZachTheSplunker
+
+nav:
+  - Home: index.md
+  - Pihole App: landing-page.md
+  - Getting Started:
+      - App Dependencies: getting-started/app-dependencies.md
+      - Where to Install: getting-started/where-to-install.md
+      - Configure:
+          - Setup Enrichment: getting-started/configure/configure-enrichment.md
+          - Setup Data Model Acceleration: getting-started/configure/configure-dma.md
+          - Update Macros: getting-started/configure/configure-macros.md
+      - Troubleshooting:
+          - Troubleshoot Enrichment: getting-started/troubleshooting/troubleshoot-enrichment.md
+  - Reference:
+      - Search Macros Used: reference/reference-macros.md
+      - Changelog:
+          - Release Notes: reference/releases/index.md
+          - Release History: reference/releases/release-history.md

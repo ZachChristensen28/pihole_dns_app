@@ -34,8 +34,7 @@
     },
     "releaseNotes": {
       "name": "README",
-      "text": "./README.md",
-      "uri": "https://splunk-pihole-app-documentation.rtfd.io/"
+      "uri": "https://splunk-pihole.ztsplunker.com/reference/releases/"
     }
   },
   "dependencies": {
