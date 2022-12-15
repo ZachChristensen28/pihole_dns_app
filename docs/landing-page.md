@@ -4,7 +4,7 @@ hide:
     - navigation
     - toc
 ---
-# Home
+# Pi-hole DNS App for Splunk (pihole_dns_app)
 
 !!! quote ""
     __*Disclaimer*__
