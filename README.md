@@ -1,4 +1,4 @@
-# Pihole DNS app for Splunk
+# Pi-hole DNS App for Splunk
 
 ![GitHub](https://img.shields.io/github/license/zachchristensen28/pihole_dns_app)
 [![docs](https://github.com/ZachChristensen28/pihole_dns_app/actions/workflows/deploy-docs.yml/badge.svg)](https://splunk-pihole.ztsplunker.com/)
