@@ -22,7 +22,6 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - abbr
-  - pymdownx.snippets
   - md_in_html
   - pymdownx.highlight:
       anchor_linenums: true
@@ -30,6 +29,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
 
 theme:
   name: material
