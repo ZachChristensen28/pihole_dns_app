@@ -3,3 +3,4 @@
 local.meta
 .idea/
 Pipfile*
+.vscode

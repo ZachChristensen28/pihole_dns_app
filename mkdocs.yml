@@ -1,7 +1,9 @@
 site_name: Pi-hole App for Splunk Documentation
-edit_uri: ""
+edit_uri: edit/master/docs/
 repo_url: https://github.com/ZachChristensen28/pihole_dns_app
 repo_name: ZachChristensen28/pihole_dns_app
+site_description: >-
+  Welcome to the Home of the Pi-hole App for Splunk documentation. The Pi-hole app allows you to visualize your Pi-hole in Splunk.
 
 plugins:
   - git-revision-date-localized:
@@ -10,8 +12,6 @@ plugins:
   - search
   - minify:
       minify_html: true
-      minify_js: true
-      minify_css: true
 
 markdown_extensions:
   - toc:
@@ -32,6 +32,23 @@ markdown_extensions:
   - pymdownx.snippets:
       auto_append:
         - includes/abbreviations.md
+  - def_list
+  - footnotes
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 
 theme:
   name: material
@@ -49,6 +66,12 @@ theme:
     - navigation.top
     - content.code.annotate
     # - toc.integrate
+    - content.code.copy
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.action.edit
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -73,6 +96,8 @@ extra:
       link: https://github.com/ZachChristensen28
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/ZachTheSplunker
+
+copyright: Copyright &copy; 2023 ZachTheSplunker
 
 nav:
   - Home: index.md
