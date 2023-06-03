@@ -1,6 +1,15 @@
 # Release history for the Pi-hole DNS app for Splunk
 
-The latest version of the Pi-hole DNS app for Splunk is version 2.2.2. See [Release notes for the Pi-hole DNS app for Splunk](../../releases/) of the latest version.
+The latest version of the Pi-hole DNS app for Splunk is version 2.2.3. See [Release notes for the Pi-hole DNS app for Splunk](../../releases/) of the latest version.
+
+## v2.2.2 <small>Jan 14, 2022</small>
+
+### New Features
+
+- Updated search dashboard to allow filtering of pie charts based of query input.
+- Deprecating all knowledge objects for blocklist activity. This feature will be brought back with v6 of Pi-hole.
+- Added ability to search by host in dashboards.
+- Transaction search dashboard will now show if the CNAME was blocked.
 
 ## v2.2.1 <small>June 7, 2021</small>
 

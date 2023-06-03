@@ -44,7 +44,7 @@ See [Release Notes](reference/releases) for version specific information.
 
 Info | Description
 ---- | -----------
-Version | 2.2.2 - [Splunkbase](https://splunkbase.splunk.com/app/4506) \| [GitHub](https://github.com/ZachChristensen28/pihole_dns_app)
+Version | 2.2.3 - [Splunkbase](https://splunkbase.splunk.com/app/4506) \| [GitHub](https://github.com/ZachChristensen28/pihole_dns_app/releases)
 Vendor Product Version | [Pi-hole® 5.x, FTL 5.x](https://pi-hole.net/)
 
 [Get Started](getting-started/app-dependencies/){ .md-button .md-button--primary }

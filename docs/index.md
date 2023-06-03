@@ -4,7 +4,7 @@ hide:
     - toc
 ---
 
-``` markdown title="Step 1"
+``` markdown title="Step 1 - Add-on"
     Install and configure Pihole DNS Add-on for Splunk
 ```
 
@@ -23,7 +23,7 @@ hide:
 
 ---
 
-``` markdown title="Step 2"
+``` markdown title="Step 2 - App"
     Install and configure Pihole DNS App for Splunk
 ```
 
