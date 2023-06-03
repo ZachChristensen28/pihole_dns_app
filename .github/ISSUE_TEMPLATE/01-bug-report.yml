@@ -1,0 +1,75 @@
+name: Report a bug
+description: Something is not working? Report a bug
+labels:
+  - "bug"
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >-
+        Please give a detailed description of the issue. Be as specific as
+        possible. If you have found a workaround or a fix for the problem,
+        please let us know. Include screenshots (if applicable).
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-links
+    attributes:
+      label: Related links
+      description: >-
+        Please list all links to the sections of
+        [the documentation](https://splunk-pihole.ztsplunker.com/) that
+        are relevant to the bug in order to show that you have consulted and
+        thoroughly read it. Additionally, list links to possibly related open
+        and closed [issues](https://github.com/ZachChristensen28/pihole_dns_app/issues).
+      value: |-
+        - [Example Issue](https://splunk-pihole.ztsplunker.com/)
+        -
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: Pi-hole DNS App for Splunk Version
+      description: >-
+        Which version of Pi-hole DNS App for Splunk (pihole_dns_app) are you using?
+      placeholder: |-
+        2.2.3
+    validations:
+      required: true
+
+  - type: input
+    id: splunk-version
+    attributes:
+      label: Splunk Version
+      description: >-
+        Which version of Splunk are you using?
+      placeholder: |-
+        9.0.1
+    validations:
+      required: true
+
+  - type: input
+    id: ta-version
+    attributes:
+      label: Pi-hole Add-on for Splunk - (TA-pihole_dns) Version
+      description: >-
+        Which version of [Pi-hole Add-on for Splunk - TA-pihole_dns](https://github.com/ZachChristensen28/TA-pihole_dns) are you using?
+      placeholder: |-
+        1.3.2
+    validations:
+      required: true
+
+  - type: input
+    id: pihole-version
+    attributes:
+      label: Pi-hole Version (if applicable)
+      description: >-
+        Which version of [Pi-hole](https://pi-hole.net/) are you using?
+      placeholder: |-
+        5.17.1
+    validations:
+      required: false
