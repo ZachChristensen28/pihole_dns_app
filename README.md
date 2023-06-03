@@ -16,17 +16,8 @@ Full documentation can be found at https://splunk-pihole.ztsplunker.com/
 
 Info | Description
 ------|----------
-Version | 2.2.2 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
+Version | 2.2.3 - See on [Splunkbase](https://splunkbase.splunk.com/app/4506/)
 Vendor Product Version | [Pi-hole® v5.x, FTL 5.x](https://pi-hole.net/)
-
-```TEXT
-Version 2.2.2
-
-- Updated search dasboard to allow filtering of pie charts based of query input.
-- Deprecating all knowledge objects for blocklist activity. This feature will be brought back with v6 of Pi-hole.
-- Added ability to search by host in dashbaords.
-- Transaction search dashboard will now show if the CNAME was blocked.
-```
 
 __*Disclaimer*__
 

@@ -5,11 +5,11 @@
     "id": {
       "group": null,
       "name": "pihole_dns_app",
-      "version": "2.2.2"
+      "version": "2.2.3"
     },
     "author": [
       {
-        "name": "Zach Christensen",
+        "name": "ZachTheSplunker",
         "email": null,
         "company": null
       }
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "TA-pihole_dns": {
-      "version": ">=1.3.0",
+      "version": ">=1.3.2",
       "optional": false
     },
     "Splunk_SA_CIM": {
